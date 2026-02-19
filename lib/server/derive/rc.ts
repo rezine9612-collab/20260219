@@ -639,17 +639,6 @@ export function toRcJson(result: SelectObservedSignalsResult): ObservedSignalsRc
   };
 }
 
-/* -------------------------
-   Example usage (Node/TS runtime)
--------------------------- */
-if (require?.main === module) {
-  const active = new Set<string>(["S1", "S2", "S5", "S9", "S14", "S11", "S17"]);
-  const selected = selectObservedSignals(active, "HIGH");
-  const out = toRcJson(selected);
-  // eslint-disable-next-line no-console
-  console.log(JSON.stringify(out, null, 2));
-}
-
 
 /* =====================
    SOURCE: Backend_10_Reasoning Control Distribution.ts
@@ -685,6 +674,12 @@ export interface LogisticModel {
   z_clip?: number;
 }
 
+export const DEFAULT_LOGISTIC_MODEL: LogisticModel = {
+  beta0: 0,
+  betas: {},
+  z_clip: 20,
+};
+
 
 /* ---------- Inputs / Outputs ---------- */
 
@@ -707,14 +702,6 @@ export interface RcDistributionOutput {
 
 
 /* ---------- helpers ---------- */
-
-function clamp01(x: number): number {
-  const v = Number.isFinite(x) ? x : 0;
-  if (v < 0) return 0;
-  if (v > 1) return 1;
-  return v;
-}
-
 function pct(x01: number): string {
   return `${Math.round(clamp01(x01) * 100)}%`;
 }
@@ -988,21 +975,10 @@ export type AgencyIndicators = {
   transition_flow: number;       // 0..1
   revision_depth: number;        // 0..1
 };
-
-function clamp01(x: number): number {
-  if (!Number.isFinite(x)) return 0;
-  return x < 0 ? 0 : x > 1 ? 1 : x;
-}
-
 function safeNum(x: unknown, fallback = 0): number {
   const n = typeof x === "number" ? x : Number(x);
   return Number.isFinite(n) ? n : fallback;
 }
-
-function safeDiv(n: number, d: number): number {
-  return d > 0 ? n / d : 0;
-}
-
 function sum(arr: number[]): number {
   let s = 0;
   for (const v of arr) s += safeNum(v, 0);
@@ -1495,7 +1471,7 @@ export function deriveRc(input: DeriveRcInput): Record<string, any> {
   const cfv = ai?.cff?.cfv ?? ai?.cff?.indicators ?? ai?.cff?.indicators_vector;
   let dist: any = { rc: {} };
   try {
-    if (cfv) dist = computePHumanFromCFV(cfv as any);
+    if (cfv) dist = buildReasoningControlDistribution({ cfv: cfv as any, model: DEFAULT_LOGISTIC_MODEL });
   } catch { dist = { rc: {} }; }
 
   // Agency indicators (structural_control_signals)

@@ -297,14 +297,6 @@ export type RfsGroupTop3Json = {
     pattern_interpretation: string; // role-aligned narrative (Top1 group anchored)
   };
 };
-
-function clamp01(x: number): number {
-  if (!isFiniteNumber(x)) return 0;
-  if (x < 0) return 0;
-  if (x > 1) return 1;
-  return x;
-}
-
 function isFiniteNumber(x: unknown): x is number {
   return typeof x === "number" && isFinite(x);
 }
@@ -716,9 +708,19 @@ export function deriveRfs(input: DeriveRfsInput): Record<string, any> {
 
   // Cognitive style summary expects style inputs; most pipelines feed it derived CFF + rubric + raw.
   // If caller already has a style_inputs block, use it; else compute minimally from raw/rubric.
-  const styleInputs = ai?.style_inputs ?? buildStyleInputs(raw, ai?.rsl_rubric);
+  const indicators = (input as any)?.cff?.indicators ?? ai?.cff?.indicators ?? {};
+  const payload = {
+    cff: {
+      aas: Number(indicators?.AAS ?? indicators?.aas ?? 0),
+      ctf: Number(indicators?.CTF ?? indicators?.ctf ?? 0),
+      rmd: Number(indicators?.RMD ?? indicators?.rmd ?? 0),
+      rdx: Number(indicators?.RDX ?? indicators?.rdx ?? 0),
+      eds: Number(indicators?.EDS ?? indicators?.eds ?? 0),
+      ifd: Number(indicators?.IFD ?? indicators?.ifd ?? 0),
+    },
+  };
 
-  const style = computeCognitiveStyleSummary(styleInputs as any);
+  const style = computeRfsFromPayload(payload as any);
 
   // Job role fit: expects role configs. If caller provides role_configs, compute; else just return style output.
   const roleConfigs = Array.isArray(ai?.role_configs) ? ai.role_configs : [];

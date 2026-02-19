@@ -562,20 +562,11 @@ export type RslRubric4 = {
 function isFiniteNumber(x: unknown): x is number {
   return typeof x === "number" && Number.isFinite(x);
 }
-
-function clamp01(x: number): number {
-  if (!Number.isFinite(x)) return 0;
-  return x < 0 ? 0 : x > 1 ? 1 : x;
-}
-
 function clamp(x: number, lo: number, hi: number): number {
   if (!Number.isFinite(x)) return lo;
   return x < lo ? lo : x > hi ? hi : x;
 }
 
-function round2(x: number): number {
-  return Math.round(x * 100) / 100;
-}
 
 function mean(xs: number[]): number {
   if (!xs.length) return 0;

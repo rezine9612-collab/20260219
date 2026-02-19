@@ -96,7 +96,8 @@ export interface ObservedOptions {
 
 /* ---------- helpers you already have ---------- */
 function clamp01(x: number): number {
-  if (!Number.isFinite(x)) return 0;
+  // Use global isFinite for broader runtime/TS lib compatibility.
+  if (!isFinite(x)) return 0;
   return Math.min(1, Math.max(0, x));
 }
 
@@ -455,10 +456,6 @@ function safeDiv(a: number, b: number): number {
   return a / Math.max(1, b);
 }
 
-function clamp01(x: number): number {
-  return Math.min(1, Math.max(0, x));
-}
-
 function structureWeight(st?: StructureType): number {
   // v1.0 문서 고정값
   switch (st ?? "linear") {
@@ -807,11 +804,6 @@ function isFiniteNumber(x: unknown): x is number {
   return typeof x === "number" && isFinite(x);
 }
 
-function clamp01(x: number): number {
-  if (!isFinite(x)) return 0;
-  return x < 0 ? 0 : x > 1 ? 1 : x;
-}
-
 function avg(a: number | null, b: number | null): number | null {
   if (a == null && b == null) return null;
   if (a == null) return b;
@@ -843,10 +835,6 @@ function confFromMargin(margin: number): number {
   return clamp01(v);
 }
 
-function round2(x: number): number {
-  // UI contract prefers a stable human-readable confidence like 0.81
-  return Math.round(x * 100) / 100;
-}
 
 export function computeFinalDeterminationCff(
   cff: CffInput,
@@ -1094,6 +1082,42 @@ export function computeFinalDeterminationCff(
 ===================== */
 export type DeriveCffInput = any;
 
+
+function flattenRawFeaturesV1(raw: any): any {
+  const l0 = raw?.layer_0 ?? {};
+  const l1 = raw?.layer_1 ?? {};
+  const l2 = raw?.layer_2 ?? {};
+  const l3 = raw?.layer_3 ?? {};
+  return {
+    units: Number(l0?.units ?? raw?.units ?? 0),
+    unit_lengths: Array.isArray(l0?.unit_lengths) ? l0.unit_lengths : [],
+    per_unit: l0?.per_unit ?? {},
+    claims: Number(l0?.claims ?? 0),
+    reasons: Number(l0?.reasons ?? 0),
+    evidence: Number(l0?.evidence ?? 0),
+
+    sub_claims: Number(l1?.sub_claims ?? 0),
+    warrants: Number(l1?.warrants ?? 0),
+    counterpoints: Number(l1?.counterpoints ?? 0),
+    refutations: Number(l1?.refutations ?? 0),
+    structure_type: l1?.structure_type ?? null,
+
+    transitions: Number(l2?.transitions ?? 0),
+    transition_ok: Number(l2?.transition_ok ?? 0),
+    revisions: Number(l2?.revisions ?? 0),
+    revision_depth_sum: Number(l2?.revision_depth_sum ?? 0),
+    belief_change: Boolean(l2?.belief_change ?? false),
+
+    intent_markers: Number(l3?.intent_markers ?? 0),
+    drift_segments: Number(l3?.drift_segments ?? 0),
+    hedges: Number(l3?.hedges ?? 0),
+    loops: Number(l3?.loops ?? 0),
+    self_regulation_signals: Number(l3?.self_regulation_signals ?? 0),
+
+    evidence_types: Array.isArray(raw?.evidence_types) ? raw.evidence_types : [],
+  };
+}
+
 export function deriveCff(input: DeriveCffInput): Record<string, any> {
   const ai = (input && typeof input === "object" && "analysis_input" in input)
     ? (input as any).analysis_input
@@ -1101,8 +1125,29 @@ export function deriveCff(input: DeriveCffInput): Record<string, any> {
 
   const raw = ai?.raw_features ?? ai?.raw ?? ai?.rawFeatures ?? ai?.raw_features_v1 ?? ai?.raw_features_v2;
 
-  const cff6 = raw ? computeCFF6_v1(raw as any) : { cff: { indicators: {} } };
-  const patterns = raw ? computeObservedPatternsV2(raw as any) : { cff: { observed_patterns: [] } };
+  const flat = raw ? flattenRawFeaturesV1(raw as any) : null;
+
+  const base6 = flat ? computeCFF6_v1(flat as any) : { AAS: 0, CTF: 0, RMD: 0, RDX: 0, EDS: 0, IFD: 0 };
+  const indicators = {
+    AAS: round2((base6 as any).AAS ?? 0),
+    CTF: round2((base6 as any).CTF ?? 0),
+    RMD: round2((base6 as any).RMD ?? 0),
+    RDX: round2((base6 as any).RDX ?? 0),
+    EDS: round2((base6 as any).EDS ?? 0),
+    IFD: round2((base6 as any).IFD ?? 0),
+  };
+
+  const cfv = {
+    aas: clamp01((base6 as any).AAS ?? 0),
+    ctf: clamp01((base6 as any).CTF ?? 0),
+    rmd: clamp01((base6 as any).RMD ?? 0),
+    rdx: clamp01((base6 as any).RDX ?? 0),
+    eds: clamp01((base6 as any).EDS ?? 0),
+    ifd: clamp01((base6 as any).IFD ?? 0),
+  };
+
+  const cff6 = { cff: { indicators, cfv } };
+  const patterns = flat ? computeObservedPatternsV2(flat as any) : { cff: { observed_patterns: [] } };
 
   const finalType = computeFinalDeterminationCff(
     { indicators: (cff6 as any)?.cff?.indicators ?? {} },
