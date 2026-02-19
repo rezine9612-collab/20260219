@@ -1,0 +1,147 @@
+{
+  "analysis_input": {
+    "raw_features": {
+      "layer_0": {
+        "units": 8,
+        "unit_lengths": [
+          120,
+          98,
+          143,
+          76,
+          110,
+          95,
+          88,
+          131
+        ],
+        "per_unit": {
+          "transitions": [
+            1,
+            0,
+            1,
+            0,
+            2,
+            0,
+            1,
+            0
+          ],
+          "revisions": [
+            0,
+            1,
+            0,
+            0,
+            1,
+            0,
+            0,
+            0
+          ]
+        },
+        "claims": 6,
+        "reasons": 8,
+        "evidence": 3
+      },
+      "layer_1": {
+        "sub_claims": 2,
+        "warrants": 3,
+        "counterpoints": 1,
+        "refutations": 1,
+        "structure_type": null
+      },
+      "layer_2": {
+        "transitions": 5,
+        "transition_types": [],
+        "transition_ok": 4,
+        "revisions": 2,
+        "revision_depth_sum": 1.8,
+        "belief_change": false
+      },
+      "layer_3": {
+        "intent_markers": 1,
+        "drift_segments": 0,
+        "hedges": 2,
+        "loops": 0,
+        "self_regulation_signals": 1
+      },
+      "evidence_types": {
+        "example": 1,
+        "data": 1,
+        "authority": 0,
+        "analogy": 0,
+        "counterexample": 0,
+        "experience": 1,
+        "theory": 0
+      },
+      "adjacency_links": 7,
+      "backend_reserved": {
+        "kpf_sim": null,
+        "tps_h": null
+      }
+    },
+    "rsl_rubric": {
+      "coherence": 4.0,
+      "structure": 4.0,
+      "evaluation": 3.5,
+      "integration": 3.8
+    }
+  },
+  "gpt_text": {
+    "rsl": {
+      "summary": {
+        "one_line": "Connects writers, history, and ideas over time but stops short of fully tracing one line to its end.",
+        "paragraph": "Thinking moves by linking personal reflection with historical patterns and named examples. Attention shifts across time, returning to earlier ideas with added nuance. Values shape how claims are framed and occasionally redirect the line of thought. Some paths pause after comparison rather than being fully followed through."
+      },
+      "dimensions": [
+        {
+          "code": "R1",
+          "label": "Interpretation",
+          "score_1to5": 4,
+          "observation": "Interprets the guiding questions by unpacking what the inquiry seeks to examine and why it matters. As a result, the response follows how each question invites reflection on meaning, history, and change rather than surface definition. However one further step could trace how a single constraint narrows that purpose at a specific moment."
+        },
+        {
+          "code": "R2",
+          "label": "Issue Decomposition",
+          "score_1to5": 4,
+          "observation": "Breaks the discussion into linked issues such as history, identity, politics, and literary form. As a result, the reasoning moves by showing how one element leads to or reacts against another across time. One next step could follow one issue through a single cause-and-effect chain without branching."
+        },
+        {
+          "code": "R3",
+          "label": "Evidence Quality",
+          "score_1to5": 3,
+          "observation": "Uses named writers, historical periods, and well-known works as supporting material. As a result, claims are grounded in recognizable examples rather than unsupported assertion. One next step could pause to compare how two sources differ in reliability or reach."
+        },
+        {
+          "code": "R4",
+          "label": "Reasoning & Counterfactuals",
+          "score_1to5": 4,
+          "observation": "Explores how ideas might appear differently under alternate historical or political conditions. As a result, the reasoning considers what follows if certain fears, values, or trends dominate at a given time. One next step could hold two possible outcomes side by side before moving on."
+        },
+        {
+          "code": "R5",
+          "label": "Coherence & Clarity",
+          "score_1to5": 4,
+          "observation": "Moves smoothly from personal experience to historical survey and then to present-day observation. As a result, ideas connect through clear transitions that keep the line of thought easy to follow. One next step could linger briefly at a transition point before shifting topics."
+        },
+        {
+          "code": "R6",
+          "label": "Metacognition & Self-repair",
+          "score_1to5": 4,
+          "observation": "Revisits earlier judgments and revises them after new exposure and reflection. As a result, the thinking shows awareness of limits in prior views and adjustment over time. One next step could name a specific trigger that prompted the shift more precisely."
+        },
+        {
+          "code": "R7",
+          "label": "Ethical / Societal Framing",
+          "score_1to5": 4,
+          "observation": "Frames ideas through values such as democracy, freedom, and fairness while acknowledging tension among them. As a result, conclusions shift depending on which value is emphasized at a given moment. One next step could set a clear boundary where one value outweighs another."
+        },
+        {
+          "code": "R8",
+          "label": "Perspective Flexibility",
+          "score_1to5": 4,
+          "observation": "Moves between personal, historical, literary, and political viewpoints to reconsider claims. As a result, conclusions change as the vantage point changes across eras and roles. One next step could explicitly contrast two viewpoints before settling on one."
+        }
+      ]
+    }
+  },
+  "meta": {
+    "input_language": "EN"
+  }
+}

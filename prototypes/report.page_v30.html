@@ -1,0 +1,5405 @@
+<!DOCTYPE html>
+
+<html class="npReport-scope" lang="ko">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1,viewport-fit=cover" name="viewport"/>
+<title>NeuPrint Integrated Cognitive &amp; Authorship Verification</title>
+<!-- Font -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?Barlow:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
+<!-- Chart.js (single-file usage) -->
+<style>
+html.npReport-scope {
+  --containerMax: 1120px;
+  --sidePad: 27px;
+  --radius: 16px;
+  --logoW: 220px;
+  --logoW-m: 190px;
+  --bg: #ffffff;
+  --panel: #ffffff;
+  --text: #0f172a;
+  --muted: #0f172a;
+  --border: #e2e8f0;
+  --soft: #f8fafc;
+  --accentA: #074d81;
+  --accentB: #40b1e6;
+  --accentC: #20cbc2;
+  --accentD: #fabb05;
+  --accentE: #f97b17;
+  --pillA: rgba(7, 77, 129, 0.18);
+  --pillB: rgba(64, 177, 230, 0.18);
+  --pillC: rgba(32, 203, 194, 0.18);
+  --pillD: rgba(250, 187, 5, 0.2);
+  --pillE: rgba(249, 123, 23, 0.18);
+  --pillN: rgba(245, 245, 245, 0.96);
+  --pillNeutral: rgba(238, 238, 238, 0.93);
+  --chipTopGap: 26px;
+  --headerBottomGap: 10px;
+  --sectionTopGap-1: 0px;
+  --sectionTopGap-2: -100px;
+  --chartH: 240px;
+  --chartH-m: 220px;
+  --donutH: 300px;
+  --donutH-m: 240px;
+  --radarH: 300px;
+  --radarH-m: 340px;
+  --sig: 264px;
+  --sig-m: 288px;
+  --gaugeH: 180px;
+  --gaugeH-m: 165px;
+  --chartAnimDuration: 2100ms;
+  --chartAnimDelay: 270ms;
+  --sigAnimMs: 4200;
+}html.npReport-scope, html.npReport-scope html.npReport-scope body {
+  height: 100%;
+}html.npReport-scope {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}html.npReport-scope body {
+  margin: 0;
+  font-family:
+  "Barlow",
+  system-ui,
+  -apple-system,
+  BlinkMacSystemFont,
+  sans-serif;
+  color: var(--text);
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: var(--bg);
+  min-height: 100svh;
+  overflow-y: scroll;
+}#npReportRoot * {
+  box-sizing: border-box;
+}#npReportRoot .container {
+  max-width: var(--containerMax);
+  margin: 0 auto;
+  padding: 18px calc(var(--sidePad) + env(safe-area-inset-left)) 56px
+  calc(var(--sidePad) + env(safe-area-inset-right));
+}#npReportRoot .topbar {
+  display: block;
+  padding: 10px 0 14px;
+  background: #fff;
+}#npReportRoot .headerTopRow {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+}#npReportRoot .headerLeft {
+  flex: 1 1 auto;
+  min-width: 0;
+  margin-top: -12px;
+}#npReportRoot .headerRight {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  margin-top: 14px;
+}#npReportRoot .headerBelowRow {
+  margin-top: 10px;
+  padding-bottom: var(--headerBottomGap);
+}#npReportRoot .headerBrand {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding-top: 0;
+  padding-bottom: 0;
+}#npReportRoot .brandLogo {
+  width: var(--logoW);
+  height: auto;
+  display: block;
+  margin-left: -10px;
+  margin-top: 19px;
+}#npReportRoot .brandline {
+  display: inline-flex;
+  align-items: center;
+  margin-top: 10px;
+  gap: 8px;
+  font-size: 15px;
+  color: var(--muted);
+  flex-wrap: wrap;
+}#npReportRoot .title {
+  margin: 22px 0 4px;
+  font-size: 42px;
+  font-weight: 600;
+  line-height: 1.15;
+}#npReportRoot .subtitle {
+  margin: 8px 0 35px 0;
+  font-size: 18px;
+  color: var(--muted);
+  line-height: 1.35;
+}#npReportRoot .metaRow {
+  margin-top: var(--chipTopGap);
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 10px;
+  align-items: stretch;
+  width: 100%;
+}#npReportRoot .chip {
+  flex: 1 1 0;
+  min-width: max-content;
+  width: auto;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 12px;
+  box-sizing: border-box;
+  padding: 6px 6px 6px 14px;
+  background: #f5f5f5;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.2;
+}#npReportRoot .chipLabel {
+  white-space: nowrap;
+  overflow: visible;
+  text-overflow: clip;
+}#npReportRoot .chip .pill {
+  margin-left: auto;
+  flex: 0 0 auto;
+  white-space: nowrap;
+  overflow: visible;
+  text-overflow: clip;
+}#npReportRoot .pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 10px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  background: #ffffff;
+  color: var(--text);
+  white-space: nowrap;
+  line-height: 1;
+}#npReportRoot .pill.toneB {
+  background: #fff;
+  color: var(--accentB);
+}#npReportRoot .pill.toneC {
+  background: #fff;
+  color: var(--accentC);
+}#npReportRoot .pill.toneD {
+  background: #fff;
+  color: var(--accentD);
+}#npReportRoot .pill.toneE {
+  background: #fff;
+  color: var(--accentE);
+}#npReportRoot .pill.toneN {
+  background: #fff;
+  color: var(--text);
+}#npReportRoot .rightMeta {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}#npReportRoot .qrBox {
+  padding: 10px;
+  background: #fff;
+  width: 116px;
+  flex: 0 0 auto;
+  margin-top: -16px;
+  transform: translateY(-4px);
+}#npReportRoot .qrBox img {
+  display: block;
+  width: 94px;
+  height: 94px;
+  margin: 0 auto;
+}#npReportRoot .verifyText {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.35;
+  margin-top: -5px;
+  max-width: 420px;
+  text-align: right;
+}#npReportRoot .verifyText span {
+  font-weight: 500;
+  color: var(--text);
+}#npReportRoot .tab.active {
+  border: 0px solid rgba(15, 23, 42, 0.4);
+  outline: 4px solid rgba(15, 23, 42, 0.78);
+  outline-offset: 0;
+  font-weight: 500;
+}#npReportRoot .grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 14px;
+  margin-top: 16px;
+  scroll-margin-top: 92px;
+}#npReportRoot .card {
+  grid-column: span 12;
+  background: var(--panel);
+  padding: 0;
+  border: 0;
+  box-shadow: none;
+}#npReportRoot .sectionBlock {
+  padding: 14px 0;
+}#npReportRoot .cardHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  margin-top: 20px;
+  margin-bottom: 10px;
+}#npReportRoot .cardTitle {
+  font-weight: 600;
+  font-size: 24px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}#npReportRoot .muted {
+  color: var(--muted);
+}#npReportRoot .small {
+  font-size: 15px;
+  font-weight: 600;
+}#npReportRoot .tiny {
+  font-size: 13px;
+  line-height: 1.4;
+}#npReportRoot .code {
+  font-family:
+  "Barlow",
+  system-ui,
+  -apple-system,
+  BlinkMacSystemFont,
+  sans-serif;
+}#npReportRoot #tab-authorship {
+  margin-top: var(--sectionTopGap-2);
+}#npReportRoot .metrics {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-top: 10px;
+}#npReportRoot .metricBox {
+  border: 1px solid rgba(226, 232, 240, 0.85);
+  border-radius: 8px;
+  background: #fff;
+  padding: 12px;
+  min-height: 92px;
+}#npReportRoot .metricLabel {
+  font-size: 13px;
+  color: var(--muted);
+  font-weight: 500;
+}#npReportRoot .metricValue {
+  margin-top: 6px;
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--text);
+}#npReportRoot .metricNote {
+  margin-top: 6px;
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.35;
+  font-weight: 400;
+}#npReportRoot #mRslLevel {
+  color: var(--accentE);
+}#npReportRoot #mRslMean {
+  color: var(--accentC);
+}#npReportRoot #mRslCohort {
+  color: var(--accentB);
+}#npReportRoot #mStructuralReliability {
+  color: var(--accentD);
+}#npReportRoot .twoCol {
+  display: grid;
+  align-items: stretch;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 12px;
+}#npReportRoot .twoCol > * {
+  height: 100%;
+}#npReportRoot #tab-rsl #rslResultsByDimension tr:last-child td {
+  border-bottom: 0 !important;
+}#npReportRoot #tab-rsl #rslResultsByDimension tr:last-child {
+  border-bottom: 0 !important;
+}#npReportRoot #tab-rsl .arcTableFrame {
+  border-bottom: 0 !important;
+}#npReportRoot .panel {
+  border: 1px solid rgba(226, 232, 240, 0.85);
+  border-radius: 8px;
+  padding: 12px;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+}#npReportRoot .kpiRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  margin-top: 10px;
+}#npReportRoot .kpi {
+  background: #f5f5f5;
+  padding: 8px 10px;
+  border-radius: 8px;
+  font-size: 13px;
+  color: var(--text);
+  line-height: 1;
+  font-weight: 400;
+}#npReportRoot .kpiLabel {
+  font-weight: 600;
+}#npReportRoot .kpiLabel .code {
+  font-weight: 400;
+}#npReportRoot .chartBox {
+  border: 1px solid rgba(226, 232, 240, 0.85);
+  border-radius: 8px;
+  background: #fff;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  overflow: hidden;
+  height: 100%;
+}#npReportRoot .chartCanvasWrap canvas {
+  width: 100% !important;
+  height: 100% !important;
+  display: block;
+}#npReportRoot .chartBox.distBar .chartCanvasWrap {
+  height: 140px;
+}#npReportRoot .chartTitleText {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.25;
+}#npReportRoot .chartCanvasWrap {
+  position: relative;
+  width: 100%;
+  height: var(--chartH);
+  min-height: var(--chartH);
+  max-height: var(--chartH);
+  flex: 0 0 auto;
+}#npReportRoot .chartBox.radarBox .chartCanvasWrap {
+  height: var(--radarH);
+  min-height: var(--radarH);
+  max-height: var(--radarH);
+}#npReportRoot canvas {
+  width: 100% !important;
+  height: 100% !important;
+}#npReportRoot .signatureBox .chartCanvasWrap {
+  aspect-ratio: 1 / 1;
+  width: 100%;
+  max-width: var(--sig);
+  margin: 0 auto;
+  position: relative;
+  height: var(--sig);
+  min-height: var(--sig);
+  max-height: var(--sig);
+  flex: 0 0 auto;
+}#npReportRoot .signatureBox #signatureCanvas {
+  width: 100% !important;
+  height: 100% !important;
+  display: block;
+}#npReportRoot table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}#npReportRoot th, #npReportRoot td {
+  padding: 9px 10px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}#npReportRoot th {
+  text-align: left;
+  font-size: 13px;
+  color: var(--muted);
+  font-weight: 600;
+  background: #fff;
+}#npReportRoot tr:last-child td {
+  border-bottom: 0;
+}#npReportRoot .footer {
+  margin-top: 22px;
+  padding: 14px 0 0;
+  border-top: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 13px;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  font-weight: 400;
+}#npReportRoot .decisionCompression {
+  margin-top: 14px;
+  margin-bottom: -30px;
+  padding: 14px 18px;
+  background: #ffffff;
+  border-radius: 12px;
+  border: 5px solid #f5f5f5;
+  font-size: clamp(15px, 4.2vw, 18px);
+  font-weight: 400;
+}
+/* Input Preview Box */
+#npReportRoot .inputPreviewBox {
+  margin-top: 14px;
+  margin-bottom: 10px;
+  padding: 14px 18px;
+  border-radius: 12px;
+  
+  background: #ffffff;
+
+  border: 1px solid #E9E9E9;
+}
+
+#npReportRoot .inputPreviewInner {
+  position: relative;
+}
+
+#npReportRoot .inputPreviewText {
+  font-size: 14px;
+  line-height: 1.6;
+  color: #0B1220;
+  white-space: pre-line;
+}
+
+#npReportRoot .inputPreviewText.collapsed {
+  display: -webkit-box;
+  -webkit-line-clamp: 6;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+
+#npReportRoot .inputPreviewFooter {
+  margin-top: 10px;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 10px;
+}
+
+#npReportRoot .inputPreviewSpacer {
+  height: 1px;
+}
+
+#npReportRoot .inputPreviewStats {
+  justify-self: end;
+  text-align: right;
+  font-size: 13px;
+  color: rgba(15,23,42,.78);
+  line-height: 1.2;
+  font-weight: 500;
+}
+
+
+#npReportRoot .inputPreviewStats .statLabel {
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+
+#npReportRoot .inputPreviewStats .statNum {
+  font-weight: 600;
+}
+
+#npReportRoot .inputPreviewToggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: transparent;
+  border: 0;
+  color: rgba(15,23,42,.70);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 6px 10px;
+  border-radius: 999px;
+}
+
+#npReportRoot .inputPreviewToggle:hover {
+  background: rgba(15,23,42,.04);
+  color: rgba(15,23,42,.92);
+}
+
+#npReportRoot .inputPreviewToggle .tIcon {
+  width: 14px;
+  height: 14px;
+  display: inline-block;
+  transition: transform .18s ease;
+}
+
+#npReportRoot .inputPreviewToggle.expanded .tIcon {
+  transform: rotate(180deg);
+}
+
+
+#npReportRoot .decisionCompressionLine {
+  line-height: 1.4;
+}#npReportRoot #tab-hr .rfFlow {
+  --rfGap: 12px;
+  margin-top:10px;
+  margin-bottom:3px;
+  padding:0;
+  border:0;
+  border-radius:0;
+  background: transparent;
+  position:relative;
+  display:flex;
+  flex-direction:column;
+  gap: var(--rfGap);
+}#npReportRoot #tab-hr .rfFlow::before {
+  display:none;
+  content:"";
+  position:absolute;
+  left: 25px;
+  top: 8px;
+  bottom: 8px;
+  width:1px;
+  background: rgba(148,163,184,.42);
+  border-radius:999px;
+}#npReportRoot #tab-hr .rfRow {
+  position:relative;
+  display:block;
+  padding: 12px 12px 12px 39px;
+  border:1px solid rgba(226,232,240,.95);
+  border-radius:12px;
+  background:#fff;
+}#npReportRoot #tab-hr .rfRow + .rfRow {
+  margin-top: 0;
+}#npReportRoot #tab-hr .rfText {
+  min-width:0;
+}#npReportRoot #tab-hr .rfTitle {
+  font-size:15px;
+  margin-top:4px;
+  margin-left:6px;
+  font-weight:500;
+  line-height:1.25;
+  color: rgba(15,23,42,.92);
+}#npReportRoot #tab-hr .rfTags {
+  margin-top:3px;
+  margin-left:6px;
+  font-size:13px;
+  font-weight:400;
+  line-height:1.25;
+  word-break: keep-all;
+}#npReportRoot #tab-hr #rfClosing {
+  margin-top:12px !important;
+  margin-bottom:3px;
+}#npReportRoot #tab-hr .rfRow.r1 {
+  --rfArrow: rgba(64,177,230,.95);
+}#npReportRoot #tab-hr .rfRow.r2 {
+  --rfArrow: rgba(7,77,129,.92);
+}#npReportRoot #tab-hr .rfRow.r3 {
+  --rfArrow: rgba(32,203,194,.95);
+}#npReportRoot #tab-hr .rfRow.r4 {
+  --rfArrow: rgba(250,187,5,.95);
+}#npReportRoot #tab-hr .rfRow.r5 {
+  --rfArrow: rgba(249,123,23,.95);
+}#npReportRoot #tab-hr .rfRow.r6 {
+  --rfArrow: rgba(148,163,184,.95);
+}#npReportRoot #tab-hr .rfFlow.is-animated .rfRow {
+  opacity:0;
+  transform: translateY(-30px);
+  will-change: opacity, transform;
+}#npReportRoot #tab-hr .rfFlow.is-animated.rf-start .rfRow {
+  animation: rfFadeInUp 1040ms cubic-bezier(.2,.8,.2,1) forwards;
+  will-change: opacity, transform;
+}#npReportRoot .alignmentStrip {
+  margin-top: 22px;
+  padding: 30px 24px 30px;
+  background: #f8f8f8;
+  width: 100%;
+  border-radius: 14px;
+  text-align: center;
+}#npReportRoot .alignmentInner {
+  max-width: var(--containerMax, 1180px);
+  margin: 0 auto;
+}#npReportRoot .alignmentLogos {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 5px 18px;
+  margin-bottom: 20px;
+}#npReportRoot .alLogo {
+  height: 40px;
+  min-width: 0;
+  padding: 6px 10px;
+  border-radius: 12px;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}#npReportRoot .alImg {
+  height: 24px;
+  width: auto;
+  max-width: 150px;
+  object-fit: contain;
+  filter: grayscale(100%);
+  opacity: 0.6;
+  display: block;
+}#npReportRoot .alFallback {
+  display: none;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(15, 23, 42, 0.5);
+  white-space: nowrap;
+}#npReportRoot .alignmentNote {
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.6;
+  color: var(--text);
+  margin: 2px auto 0;
+  max-width: 980px;
+}#npReportRoot .alignmentNote .em {
+  font-weight: 600;
+  color: var(--text-strong, var(--text));
+}#npReportRoot .uNoteTight {
+  margin-top: -6px;
+  margin-bottom: 14px;
+  font-size: 14px;
+  line-height: 1.55;
+}#npReportRoot .uNoteTight2 {
+  margin-top: -6px;
+  margin-bottom: 16px;
+  font-size: 14px;
+  line-height: 1.55;
+}#npReportRoot .uMt0 {
+  margin-top: 0px;
+}#npReportRoot .uMt6Lh {
+  margin-top: 6px;
+  line-height: 1.55;
+}#npReportRoot .uMt8Lh {
+  margin-top: 8px;
+  line-height: 1.55;
+}#npReportRoot .uMt10 {
+  margin-top: 10px;
+}#npReportRoot .uMt12 {
+  margin-top: 12px;
+}#npReportRoot .uMt14 {
+  margin-top: 14px;
+}#npReportRoot .uMb8 {
+  margin-bottom: 8px;
+}#npReportRoot .uW110 {
+  width: 110px;
+}#npReportRoot .uW220 {
+  width: 220px;
+}#npReportRoot .uTopRule {
+  margin-top: 10px;
+  line-height: 1.55;
+  padding-top: 10px;
+  border-top: 1px solid rgba(226, 232, 240, 0.85);
+}#npReportRoot .uLh155 {
+  line-height: 1.55;
+}#npReportRoot .uMt6 {
+  margin-top: 6px;
+}#npReportRoot .uMt11 {
+  margin-top: 11px;
+}#npReportRoot .uMt10Lh {
+  margin-top: 10px;
+  line-height: 1.55;
+}#npReportRoot .uMt12Lh {
+  margin-top: 12px;
+  line-height: 1.55;
+}#npReportRoot .uListTight {
+  margin: 8px 0 0 -24px;
+  line-height: 1.6;
+}#npReportRoot .uListTight2 {
+  margin: 10px 0 0 -24px;
+  line-height: 1.6;
+}#npReportRoot .uH140 {
+  height: 140px;
+}#npReportRoot .uW120 {
+  width: 120px;
+}#npReportRoot .uW140 {
+  width: 140px;
+}#npReportRoot .uW160 {
+  width: 160px;
+}#npReportRoot .roleFitGrid {
+  align-items: stretch;
+  gap: 12px;
+  grid-template-columns: minmax(0, 1.15fr) minmax(340px, 0.85fr);
+}#npReportRoot .roleFitLeftCol {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}#npReportRoot .roleFitRightCol {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  min-width: 340px;
+  max-width: 520px;
+}#npReportRoot .tableFrame {
+  margin-top: 10px;
+  overflow: auto;
+  border-top: 1px solid rgba(226, 232, 240, 0.85);
+  border-bottom: 1px solid rgba(226, 232, 240, 0.85);
+  border-left: 0;
+  border-right: 0;
+  border-radius: 0;
+}#npReportRoot .rslOneLine {
+  margin-top: 10px;
+  margin-bottom: 12px;
+  font-size: 18px;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  color: rgba(15, 23, 42, 0.9);
+}#npReportRoot .chartCohortWrap {
+  margin-top: 30px;
+  height: 271px;
+  min-height: 104px;
+  max-height: 271px;
+}#npReportRoot .centerTiny {
+  margin-top: 8px;
+  margin-bottom: 11px;
+  font-size: 15px;
+  text-align: center;
+}#npReportRoot #tab-rsl.grid {
+  margin-top: 8px;
+}#npReportRoot #tab-cff .card {
+  overflow: visible;
+}#npReportRoot #tab-cff {
+  padding-bottom: 6px;
+}#npReportRoot #tab-authorship {
+  margin-top: 14px;
+}#npReportRoot #tab-hr {
+  margin-bottom: 10px;
+}#npReportRoot #tab-rsl {
+  margin-top: 0;
+}#npReportRoot #tab-rsl .sectionBlock {
+  padding-top: 0;
+}#npReportRoot #tab-rsl .cardHeader {
+  margin-top: 8px;
+}#npReportRoot main > section.grid:first-of-type, #npReportRoot .container > section.grid:first-of-type, #npReportRoot section.grid#tab-rsl {
+  margin-top: 0;
+  scroll-margin-top: 0;
+}#npReportRoot #aiPatternLabel,
+#npReportRoot #aiReliability {
+  line-height: 1.4;
+  display: inline-block;
+}#npReportRoot #tab-hr .rfMark {
+  position:absolute;
+  left:25px;
+  top:50%;
+  transform: translate(-50%, -50%);
+  width:22px;
+  height:22px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  pointer-events:none;
+}#npReportRoot #tab-hr .rfStep {
+  font-size:16px;
+  font-weight:700;
+  line-height:1;
+  color: var(--rfArrow, rgba(32,203,194,.95));
+}#npReportRoot #tab-hr .rfRow.r1 .rfStep::before {
+  content:"①";
+}#npReportRoot #tab-hr .rfRow.r2 .rfStep::before {
+  content:"②";
+}#npReportRoot #tab-hr .rfRow.r3 .rfStep::before {
+  content:"③";
+}#npReportRoot #tab-hr .rfRow.r4 .rfStep::before {
+  content:"④";
+}#npReportRoot #tab-hr .rfRow.r5 .rfStep::before {
+  content:"⑤";
+}#npReportRoot #tab-hr .rfRow.r6 .rfStep::before {
+  content:"⑥";
+}#npReportRoot #tab-cff table thead th:nth-child(4), #npReportRoot #tab-cff table tbody td:nth-child(4) {
+  display: none !important;
+}#npReportRoot #mixKpis .agencyLabel {
+  font-weight: 600;
+}#npReportRoot #tab-hr .rfArrow {
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin-top: -15px;
+  line-height: 1;
+  font-size: var(--rfArrowSize);
+  font-weight: 200;
+  color: #C6CFDC;
+  user-select:none;
+}#npReportRoot #tab-hr .rfFlow.is-animated .rfArrow {
+  opacity:0;
+  transform: translateY(-30px);
+  will-change: opacity, transform;
+}#npReportRoot #tab-hr .rfFlow.is-animated.rf-start .rfArrow {
+  animation: rfFadeInUp 820ms cubic-bezier(.2,.8,.2,1) forwards;
+  will-change: opacity, transform;
+}@keyframes rfFadeInUp {
+  from {
+    opacity:0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity:1;
+    transform: translateY(0);
+  }
+}@media (prefers-reduced-motion: reduce) {
+  #npReportRoot #tab-hr .rfFlow.is-animated .rfRow {
+    opacity:1 !important;
+    transform:none !important;
+    animation:none !important;
+  }
+}@media (max-width: 980px)  {
+  #npReportRoot .metaRow {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    justify-content: flex-start;
+  }
+  #npReportRoot .metrics {
+    grid-template-columns: repeat(1, 1fr);
+  }
+  #npReportRoot .twoCol {
+    grid-template-columns: 1fr;
+  }
+  #npReportRoot .rightMeta {
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: flex-end;
+  }
+  #npReportRoot .verifyText {
+    max-width: 340px;
+  }
+  #npReportRoot #tab-hr .twoCol {
+    grid-template-columns: 1fr !important;
+  }
+  #npReportRoot #tab-hr .twoCol > * {
+    min-width: 0 !important;
+    max-width: none !important;
+  }
+  #npReportRoot #tab-hr .panel {
+    min-width: 0 !important;
+    max-width: none !important;
+  }
+}@media (max-width: 680px)  {
+  html.npReport-scope body {
+    overflow-x: hidden;
+  }
+  #npReportRoot .container {
+    padding: 12px calc(24px + env(safe-area-inset-left)) 44px
+    calc(24px + env(safe-area-inset-right));
+  }
+  #npReportRoot .headerTopRow {
+    flex-direction: column;
+    gap: 12px;
+  }
+  #npReportRoot .headerRight {
+    width: 100%;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+  #npReportRoot .qrBox {
+    width: 108px;
+  }
+  #npReportRoot .qrBox img {
+    width: 84px;
+    height: 84px;
+  }
+  #npReportRoot .verifyText {
+    text-align: left;
+    max-width: none;
+  }
+  #npReportRoot .brandLogo {
+    width: var(--logoW-m);
+  }
+  #npReportRoot .brandline {
+    font-size: 11px;
+  }
+  #npReportRoot .title {
+    font-size: 28px;
+  }
+  #npReportRoot .subtitle {
+    font-size: 14px;
+    margin-top: 18px;
+  }
+  #npReportRoot .cardTitle {
+    font-size: 20px;
+  }
+  #npReportRoot .chartCanvasWrap {
+    height: var(--chartH-m);
+    min-height: var(--chartH-m);
+    max-height: var(--chartH-m);
+  }
+  #npReportRoot .chartBox.radarBox .chartCanvasWrap {
+    height: var(--radarH-m);
+    min-height: var(--radarH-m);
+    max-height: var(--radarH-m);
+  }
+  #npReportRoot .signatureBox .chartCanvasWrap {
+    max-width: var(--sig-m);
+    height: var(--sig-m);
+    min-height: var(--sig-m);
+    max-height: var(--sig-m);
+  }
+  #npReportRoot .metaRow {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  #npReportRoot #qrBlock {
+    display: none !important;
+  }
+  #npReportRoot #tab-cff .panel table thead th:nth-child(4), #npReportRoot #tab-cff .panel table tbody td:nth-child(4) {
+    display: none !important;
+  }
+  #npReportRoot #tab-cff .panel table {
+    table-layout: fixed;
+  }
+  #npReportRoot #tab-cff .panel table thead th:nth-child(1) {
+    width: 72px !important;
+  }
+  #npReportRoot #tab-cff .panel table tbody td:nth-child(1) {
+    width: 72px !important;
+  }
+  #npReportRoot #tab-cff .panel table thead th:nth-child(2) {
+    width: 72px !important;
+    text-align: left !important;
+    padding-right: 8px !important;
+    white-space: nowrap !important;
+  }
+  #npReportRoot #tab-cff .panel table tbody td:nth-child(2) {
+    width: 72px !important;
+    text-align: left !important;
+    padding-right: 8px !important;
+    white-space: nowrap !important;
+  }
+  #npReportRoot #tab-cff .panel table thead th:nth-child(3), #npReportRoot #tab-cff .panel table tbody td:nth-child(3) {
+    width: auto !important;
+    padding-left: 10px !important;
+    padding-right: 8px !important;
+  }
+  #npReportRoot .npFlowTitle {
+    font-size: 22px !important;
+  }
+  #npReportRoot .npFlowTags {
+    font-size: 18px !important;
+  }
+  #npReportRoot #tab-rsl .arcTableFrame table thead th:nth-child(2), #npReportRoot #tab-rsl .arcTableFrame table tbody td:nth-child(2) {
+    text-align: right !important;
+    padding-right: 12px;
+  }
+  #npReportRoot #tab-rsl .arcTableFrame table tbody tr td {
+    border-bottom: 1px solid var(--border) !important;
+  }
+  #npReportRoot #tab-rsl .arcTableFrame table tbody tr:last-child td {
+    border-bottom: 0 !important;
+  }
+  #npReportRoot #tab-rsl .arcTableFrame table thead {
+    display: none !important;
+  }
+  #npReportRoot #tab-rsl .arcTableFrame table tbody td:last-child {
+    display: none !important;
+  }
+  #npReportRoot #tab-rsl .arcTableFrame {
+    border-top: 0 !important;
+    border-bottom: 0 !important;
+  }
+  #npReportRoot #tab-rsl .arcTableFrame table {
+    border-collapse: separate;
+    border-spacing: 0 10px;
+  }
+  #npReportRoot #tab-rsl .arcTableFrame table tbody tr td {
+    padding: 10px 10px !important;
+    background: transparent;
+  }
+  #npReportRoot #tab-rsl .arcTableFrame table tbody tr td {
+    border-bottom: 0 !important;
+  }
+  #npReportRoot .alignmentStrip {
+    margin-top: 18px;
+    padding: 16px 14px 16px;
+  }
+  #npReportRoot .alignmentLogos {
+    gap: 12px 18px;
+    margin-bottom: 12px;
+  }
+  #npReportRoot .alLogo {
+    height: 38px;
+    padding: 6px 8px;
+    border-radius: 10px;
+  }
+  #npReportRoot .alImg {
+    height: 22px;
+    max-width: 140px;
+  }
+  #npReportRoot .alignmentNote {
+    font-size: 13px;
+    padding: 0 10px;
+  }
+  #npReportRoot #tab-rsl .arcHeadLine {
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    gap:10px;
+    margin-bottom: 6px;
+  }
+  #npReportRoot #tab-rsl .arcDimLabel {
+    font-weight:600;
+  }
+  #npReportRoot #tab-rsl .arcScoreWrap {
+    margin-left:auto;
+    text-align:right;
+    white-space:nowrap;
+    font-weight:600;
+  }
+  #npReportRoot #tab-rsl .arcScoreWord, #npReportRoot #tab-rsl .arcScoreDot {
+    font-weight:600;
+  }
+  #npReportRoot #tab-rsl .arcObsMobile {
+    margin-top:0;
+  }
+}@media (max-width: 680px) {
+  #npReportRoot #tab-rsl .arcHeadLine {
+    margin-bottom:6px !important;
+  }
+  #npReportRoot #tab-rsl .arcDimLabel {
+    font-size:14px !important;
+    font-weight:600;
+  }
+  #npReportRoot #tab-rsl .arcScoreWrap {
+    font-size:14px !important;
+    font-weight:600;
+  }
+  #npReportRoot #tab-hr .rfTitle {
+    font-size:14px;
+  }
+}
+
+@media (max-width: 680px) {
+  #npReportRoot .inputPreviewToggle {
+    justify-content: flex-start !important;
+    text-align: left !important;
+    margin-left: 0 !important;
+  }
+}
+
+
+
+@media (max-width: 680px) {
+  #npReportRoot .inputPreviewFooter {
+    grid-template-columns: auto 1fr !important;
+    gap: 10px !important;
+  }
+  #npReportRoot .inputPreviewSpacer {
+    display: none !important;
+  }
+  #npReportRoot .inputPreviewToggle {
+    justify-self: start !important;
+    justify-content: flex-start !important;
+    text-align: left !important;
+    margin-left: 0 !important;
+  }
+  #npReportRoot .inputPreviewStats {
+    justify-self: end !important;
+    text-align: right !important;
+  }
+}
+
+
+
+
+
+
+/* Box labels aligned to the same content inset as inner text */
+#npReportRoot .boxLabel.small {
+  display: block;
+  margin: 0 0 8px 0;
+  line-height: 1.2;
+}
+
+
+
+/* Submitted Text box: custom short-dash border (reliable) */
+#npReportRoot .inputPreviewBox {
+  position: relative;
+   /* border drawn by ::before */
+
+  border: 1px solid #E9E9E9;
+}
+
+
+
+
+/* Stats color fix: numbers match main ink, labels slightly muted */
+#npReportRoot .inputPreviewStats {
+  color: #0B1220;
+}
+
+#npReportRoot .inputPreviewStats .statLabel {
+  color: rgba(11,18,32,.60);
+  font-weight: 500;
+}
+
+</style>
+</head>
+<body>
+<div id="npReportRoot">
+<!-- Header -->
+<header class="topbar" id="topbar">
+<div class="container">
+<div class="headerTopRow">
+<div class="headerLeft">
+<div class="headerBrand">
+<img alt="NeuPrint Logo" class="brandLogo" src="./neuprint_logo.svg"/>
+</div>
+<div class="brandline">
+<span> NeuPrint Cognitive Forensics Engine v1.1 </span>
+</div>
+</div>
+<div class="headerRight rightMeta" id="qrBlock">
+<div class="verifyText" id="verifyText">
+              This determination is structurally signed and referenceable.
+              <br/>
+<span id="verifyUrlText"></span>
+<br/>
+<br/>
+              QR code shown represents the verification anchor.
+              <br/>
+              Verification ID :
+              <span id="verifyIdText"></span>
+</div>
+<div class="qrBox" title="QR image">
+<img alt="QR placeholder" id="qrImg" src="https://upload.wikimedia.org/wikipedia/commons/d/d0/QR_code_for_mobile_English_Wikipedia.svg"/>
+</div>
+</div>
+</div>
+<div class="headerBelowRow">
+<h1 class="title" id="heroTitle">Structural Reference for Human Reasoning</h1>
+<p class="subtitle" id="heroDesc">NeuPrint provides a decision-grade structural reference that determines whether reasoning control remained with the human under AI-assisted conditions.</p>
+<div class="metaRow">
+<span class="chip">
+<span class="chipLabel"> RSL Level </span>
+<span class="pill toneB" id="rslPill"></span>
+</span>
+<span class="chip" title="Final determination label">
+<span class="chipLabel"> Determination </span>
+<span class="pill toneE" id="finalDetPill"></span>
+</span>
+<span class="chip" title="Reasoning Index (uses the same 0–5 axis shown in the placement map)">
+<span class="chipLabel"> FRI </span>
+<span class="pill toneC" id="reasoningIndexPill"></span>
+</span>
+<span class="chip" title="Structural agency share">
+<span class="chipLabel"> Control </span>
+<span class="pill toneN" id="controlPill"></span>
+</span>
+<span class="chip" title="Top recommended role track">
+<span class="chipLabel"> Role Fit </span>
+<span class="pill toneD" id="jobFitPill"></span>
+</span>
+</div>
+
+<!-- Input Text Preview (hardcoded for now) -->
+<div class="inputPreviewBox" id="inputPreviewBox">
+  <div class="small boxLabel">Submitted Text</div>
+  <div class="inputPreviewInner">
+    <div class="inputPreviewText collapsed" id="inputPreviewText">At the Doorway of an Unfamiliar Convergence
+When I first encountered the title of this course, “3D Realization of Literary Imagination,” the combination of the words “literature” and “3D” felt unfamiliar and somewhat awkward. I had assumed that literature belonged to the realm of emotion and reflection, while 3D belonged to the realm of technology and visualization.
+However, upon further reflection, I realized that everything we create in 3D ultimately begins in the human mind. Experiences, emotions, and thoughts merge into ideas, which then evolve into concrete forms. From this perspective, the roots of 3D technology inevitably lie in humanistic imagination. Therefore, literary sensitivity and personal experience can also serve as profound resources for 3D creation.
+Recently, the concept of “convergence” has been emphasized across society. I personally experienced the appeal of convergence in the past through a book titled Economics in Paintings. The book explained economic principles through works of art and analyzed the economic contexts embedded within paintings. Two seemingly unrelated fields, art and economics, blended together, making the content more engaging and easier to understand. This experience taught me that convergence is not simply the juxtaposition of two fields, but rather a process in which they complement each other and create synergy. With this curiosity about what creative outcomes might emerge from the meeting of two domains, I decided to enroll in this course.
+Expansion of Humanistic Thinking: Encountering Poetry
+The course was jointly taught by two professors. At the beginning of the semester, we met each professor separately to learn about the overall structure and operation of the class. The course was divided into two parts: the first half focused on humanities activities centered on poetry, while the second half emphasized 3D practice using Blender. There were no midterm or final exams. Instead, grades were evaluated through a midterm assignment and a final project based on each half of the course content. This flexible structure allowed me to immerse myself without pressure and reflect my individual interests and growth.
+In the first half, the professor provided poems selected for each session, and students were asked to read and interpret them independently. A key rule was that we were not allowed to search the internet. We had to rely entirely on our own emotions and thoughts to interpret the poems. The reasoning was that exposure to someone else’s interpretation could fix our thinking within that framework, rather than encouraging independent reflection.
+Afterward, we gathered in groups to share and present our interpretations, expanding our perspectives through discussion. Group activities are often associated with awkward or formal atmospheres, but in this class, since there was no single correct interpretation, conversations flowed naturally and freely without the pressure to find the “right answer.” Listening to completely different interpretations from my group members often made me think, “That perspective is also possible,” and I felt my own thinking deepen and expand.
+The experience of examining life and emotions through poetry resonated with my daily experiences, making the class both meaningful and engaging.
+Life Lessons from a Line of Poetry
+The poem that left the strongest impression on me was “On Marriage.” In particular, the line, “But do not stand too close together. Even the cypress and the oak cannot grow in each other’s shadow,” stayed with me for a long time. Although the poem speaks about marriage, I interpreted it as a message about human relationships in general.
+When we truly love someone, we naturally want to become closer to them. However, when that desire becomes excessive, leading us to invade each other’s boundaries or make extreme sacrifices, relationships can easily turn into sources of pain. If we pour out love without protecting ourselves, the disappointment we feel when expectations are not met can be overwhelming. Therefore, I realized the importance of developing the strength to stand independently, maintaining appropriate distance and space, and respecting the boundaries between oneself and others. This poem allowed me to reflect deeply on balance in relationships, self-care, and mutual respect. It was not merely reading a poem and moving on; it was an experience of bringing poetry into life philosophy and contemplation, which made the class unforgettable.
+3D Practice: Challenging an Unfamiliar Technology
+The second half of the course focused on learning Blender, a 3D modeling program. Since I had never used such software before, I initially felt overwhelmed and worried about falling behind other students. However, the professors explained the interface carefully from a beginner’s perspective and walked around the classroom during practice sessions to provide individual feedback. Their encouragement, “Don’t feel pressured. Try pressing different functions and get familiar with them step by step,” was comforting and motivating at the same time.
+Throughout the course, we learned step by step by creating various outputs: building a house with windows using basic shapes, adding lighting to spaces, expressing transparent materials like flowing water, creating metallic textures, and modeling uneven surfaces like mountains. The fact that we produced tangible results each session gave me a strong sense of achievement. Even the online class that replaced a holiday session felt disappointing, because I had begun to want to learn more deeply. Blender gradually stopped feeling like an unfamiliar tool and started to feel like a creative partner.
+Transformation into an Active Learner
+Through the Blender lessons, I transformed from a passive student into an active learner. Beyond the shortcuts taught in class, I searched for resources on my own and studied unfamiliar functions through videos and articles, becoming increasingly comfortable with the program. The process itself was enjoyable, but the most valuable outcome was developing an attitude that did not fear new challenges.
+Many previous theoretical classes I had taken focused on memorizing fixed content or simply following instructions. In contrast, this class required me to think, interpret, and implement ideas myself, resulting in much higher immersion. Completing projects at my own pace was enjoyable, and throughout the semester, interest and excitement outweighed any sense of burden.
+The Power of Convergence Beyond Boundaries
+Ultimately, the most significant lesson I gained from this course was the power of breaking boundaries. Literature, with its emotional and reflective nature, and 3D design, with its technical and visual characteristics, initially seemed incompatible. However, in practice, the two domains complemented each other and played a decisive role in stimulating creativity. Expanding imagination and interpretation through literature and then visualizing those ideas using technology was an extremely creative experience.
+This course was not simply about studying two subjects side by side. It was a genuine example of convergence education, where different domains were organically connected to create new value.
+Recommendation
+“3D Realization of Literary Imagination” is a unique course that breaks down the boundaries between humanities and technology while cultivating creative thinking and expressive ability. It goes beyond simple technical training to provide an integrated educational experience that encompasses emotion, cognition, and expression. Therefore, I would highly recommend this course to students who aspire to become interdisciplinary and creative thinkers.
+</div>
+    <div class="inputPreviewFooter">
+      <div class="inputPreviewSpacer" aria-hidden="true"></div>
+      <button class="inputPreviewToggle" id="inputPreviewToggle" type="button" aria-expanded="false">
+        <span class="tLabel">View all</span>
+        <svg class="tIcon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="M6.7 9.2a1 1 0 0 1 1.4 0L12 13.1l3.9-3.9a1 1 0 1 1 1.4 1.4l-4.6 4.6a1 1 0 0 1-1.4 0L6.7 10.6a1 1 0 0 1 0-1.4z"></path>
+        </svg>
+      </button>
+      <div class="inputPreviewStats" id="inputPreviewStats"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Decision-Grade Cognitive Compression -->
+<div class="decisionCompression">
+  <div class="small boxLabel">Structural Interpretation</div>
+<div class="decisionCompressionLine"><span id="heroDecisionQuote"></span></div>
+</div>
+</div>
+</div>
+</header>
+<div class="container">
+<!-- 3. Reasoning Control (Structural Agency) -->
+<section class="grid" id="tab-rsl">
+<div class="card">
+<div class="sectionBlock">
+<div class="cardHeader">
+<div class="cardTitle">1. Reasoning Structure Layer (RSL)</div>
+</div>
+<div class="tiny muted uNoteTight2">
+              This section shows how your thinking was organized in this writing, and what you can improve next.
+            </div>
+<!-- A) Single-line section purpose (student-friendly) -->
+<div class="tiny muted uNoteTight"></div>
+<div class="metrics uMb8">
+<div class="metricBox">
+<div class="metricLabel">RSL Level</div>
+<div class="metricValue" id="mRslLevel"></div>
+<div class="metricNote" id="mRslLevelNote"></div>
+</div>
+<div class="metricBox">
+<div class="metricLabel">Final Reasoning Index</div>
+<div class="metricValue" id="mRslMean"></div>
+<div class="metricNote" id="mRslMeanNote"></div>
+</div>
+<div class="metricBox">
+<div class="metricLabel">Cohort Placement</div>
+<div class="metricValue" id="mRslCohort"></div>
+<div class="metricNote" id="mRslCohortNote"></div>
+</div>
+<div class="metricBox">
+<div class="metricLabel">Structural Reliability Index</div>
+<div class="metricValue" id="mStructuralReliability"></div>
+<div class="metricNote" id="mStructuralReliabilityNote"></div>
+</div>
+</div>
+<!-- C) Summary -->
+<div class="uMt14">
+<div class="panel">
+<div class="small">RSL Summary</div>
+<div class="rslOneLine" id="rsl_one_line_summary">
+<span id="rslOneLine"></span>
+</div>
+<div class="tiny muted uMt0" id="rslSummaryText"></div>
+</div>
+</div>
+<!-- D) Charts -->
+<div class="twoCol uMt14">
+<!-- (LEFT) Cohort Positioning (replaces RSL Dimension Bars) -->
+<div class="chartBox">
+<div class="chartTitleText">Cohort Positioning</div>
+<div class="chartCanvasWrap chartCohortWrap">
+<canvas id="chartRslBars"> </canvas>
+</div>
+<div class="tiny muted uMt10">
+                  Horizontal axis shows FRI (0 to 5). Vertical axis shows the share of the cohort (0
+                  to 100%) at each score band. The yellow marker shows the current position, and the
+                  outer ring indicates the positioning moment.
+                </div>
+</div>
+<!-- (RIGHT) RSL Radar (unchanged) -->
+<div class="chartBox radarBox">
+<div class="chartTitleText">RSL Radar</div>
+<div class="chartCanvasWrap">
+<canvas id="chartRslRadar"> </canvas>
+</div>
+<div class="tiny muted uMt10">
+                  This chart shows balance. A rounder shape means your skills work together. Sharp
+                  dips mean one or two skills need attention.
+                </div>
+</div>
+</div>
+<!-- E) Dimension Results -->
+<div class="panel uMt14">
+<div class="small">Reasoning by Dimension</div>
+<!-- ✅ 여기(이 줄)에 arcTableFrame "여는 div"를 넣는다 -->
+<div class="arcTableFrame tableFrame">
+<table>
+<thead>
+<tr>
+<th class="uW220">Reasoning Dimension</th>
+<th class="uW110">Score</th>
+<th>Structural Observation</th>
+</tr>
+</thead>
+<tbody id="rslResultsByDimension">
+<!-- rows injected from DEV JSON -->
+</tbody>
+</table>
+<div class="tiny muted uTopRule">
+                  RSL (R1–R8) is aligned with internationally validated reasoning constructs used
+                  across OECD/PISA assessments, ETS evidence-centered evaluation frameworks,
+                  APA-endorsed critical thinking models, and UNESCO-referenced global competence and
+                  citizenship frameworks.
+                </div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section class="grid" id="tab-cff">
+<div class="card">
+<div class="sectionBlock">
+<div class="cardHeader">
+<div class="cardTitle">2. Cognitive Fingerprint Framework (CFF)</div>
+</div>
+<div class="tiny muted uNoteTight2">
+              Describes structural characteristics of reasoning formation and revision behavior
+              observed in the task, based on the CFF indicator set.
+            </div>
+<div class="twoCol">
+<!-- LEFT : Observed Reasoning Patterns -->
+<div class="panel">
+<div class="small">Observed Reasoning Patterns</div>
+<!-- Result line -->
+<div class="tiny muted uMt8Lh">
+                  Primary pattern is <span class="kpiLabel" id="cffPrimary"></span> and secondary
+                  pattern is <span class="kpiLabel" id="cffSecondary"></span>.
+                </div>
+<!-- Middle: primary / secondary labels (boxed) -->
+<div class="kpiRow uMt10">
+<span class="kpi"><span class="kpiLabel" id="cffPrimary2"></span></span>
+<span class="kpi"><span class="kpiLabel" id="cffSecondary2"></span></span>
+</div>
+<!-- Bottom: explanation (meaning) -->
+<div class="tiny muted uMt8Lh" id="cffPatternMeaning"></div>
+</div>
+<!-- RIGHT : Final Determination -->
+<div class="panel">
+<div class="small">Final Determination</div>
+<div class="tiny muted uMt10Lh">
+                  Based on the observed reasoning patterns and structural control signals, the reasoning is classified as :
+                </div>
+<div class="kpiRow uMt10">
+<span class="kpi"><span class="kpiLabel" id="finalTypeChip"></span></span>
+<span class="kpi">
+<span class="kpiLabel"> Type Confidence : </span>
+<span class="code" id="finalTypeConfidence"></span>
+</span>
+</div>
+<div class="tiny muted uMt6Lh" id="cffFinalMeaning"></div>
+</div>
+</div>
+<div class="twoCol">
+<!-- Signature -->
+<div class="chartBox signatureBox" id="signatureBox">
+<div class="chartTitleText">Cognitive Fingerprint</div>
+<div class="chartCanvasWrap" id="signatureWrap">
+<canvas aria-label="Cognitive fingerprint canvas" id="signatureCanvas"> </canvas>
+</div>
+<div class="tiny muted centerTiny">
+<span class="kpiLabel"> Reasoning Structure Visualization </span>
+</div>
+<div class="tiny muted uLh155" id="signatureNote">The Cognitive Fingerprint is a structural identification layer for reasoning. While topics may change, the way a person constructs claims, moves between ideas, and revises conclusions follows a consistent pattern. NeuPrint visualizes this repeatable structure to enable comparison across prompts, domains, and time.</div>
+</div>
+<!-- Radar -->
+<div class="chartBox radarBox">
+<div class="chartTitleText">CFF Radar</div>
+<div class="chartCanvasWrap">
+<canvas id="chartCffRadar"> </canvas>
+</div>
+<div class="tiny muted uMt10">
+                  The CFF Radar shows the relative distribution of structural reasoning indicators.
+                  The shape reflects contribution patterns rather than performance or optimality.
+                </div>
+</div>
+</div>
+<div class="panel uMt14">
+<div class="small">CFF Indicator Summary</div>
+<div class="tableFrame">
+<table>
+<thead>
+<tr>
+<th class="uW120">Code</th>
+<th class="uW140">Score</th>
+<th>Indicator</th>
+<th class="uW160">Status</th>
+</tr>
+</thead>
+<tbody id="cffTableBody"></tbody>
+</table>
+</div>
+<div class="tiny muted uMt10Lh">
+                The Cognitive Fingerprint Framework describes how reasoning is structurally formed,
+                revised, and controlled, providing a stable reference for understanding thinking
+                patterns beyond surface content or outcomes.
+              </div>
+</div>
+</div>
+</div>
+</section>
+<section class="grid" id="tab-authorship">
+<div class="card">
+<div class="sectionBlock">
+<div class="cardHeader">
+<div class="cardTitle">3. Reasoning Control (Structural Agency)</div>
+</div>
+<div class="tiny muted uNoteTight2">
+              Evaluates individual control over reasoning decisions versus automated continuation,
+              as defined by structural agency at decision boundaries in NeuPrint.
+            </div>
+<!-- 상단 패널 -->
+<div class="twoCol">
+<!-- LEFT -->
+<div class="panel">
+<div class="small">Reasoning Control Summary</div>
+<div class="tiny muted uMt6" id="aiInterpretation"></div>
+<div class="kpiRow uMt10">
+<span class="kpi">
+<span class="kpiLabel"> Control pattern : </span>
+<span class="code" id="aiPatternLabel"></span>
+</span>
+<span class="kpi">
+<span class="kpiLabel"> Reliability band : </span>
+<span class="code" id="aiReliability"></span>
+</span>
+</div>
+<div class="tiny muted uMt10Lh" id="mixBandRationale"></div>
+</div>
+<!-- RIGHT -->
+<div class="panel">
+<div class="small">Observed Structural Signals</div>
+<ul class="tiny muted uListTight" id="agencySignalsList">
+<!-- injected from report data -->
+</ul>
+<div class="tiny muted uMt10Lh">
+                  These signals reflect document-specific structural behavior and are independent of
+                  surface-level writing style.
+                </div>
+</div>
+</div>
+<!-- 하단 차트 -->
+<div class="twoCol uMt12">
+<!-- Distribution -->
+<div class="chartBox distBar">
+<div class="chartTitleText">Reasoning Control Distribution</div>
+<div class="chartCanvasWrap uH140">
+<canvas id="chartMixAgency"> </canvas>
+</div>
+<div class="tiny muted uMt10Lh">
+                  The distribution shows the proportion of ownership of reasoning decisions across
+                  structural decision points. Values reflect where control was exercised during
+                  reasoning transitions, not authorship attribution, model usage, or stylistic
+                  origin. <span id="mixPatternInterpretation"></span>
+</div>
+<div class="kpiRow uMt6" id="mixKpis"></div>
+</div>
+<!-- Structural Signals -->
+<div class="chartBox">
+<div class="chartTitleText">
+                  Structural Control Signals
+                  <span class="tiny muted"> (Agency Indicators) </span>
+</div>
+<div class="chartCanvasWrap">
+<canvas id="chartAuthSignals"> </canvas>
+</div>
+<div class="tiny muted uMt10Lh">
+                  Signal values represent relative contribution to the overall reasoning control
+                  determination, normalized on a 0 to 1 scale.
+                </div>
+<ul class="tiny muted uListTight2">
+<li>
+<span class="kpiLabel"> Structural variance </span>
+                    : non-linear restructuring across reasoning boundaries.
+                  </li>
+<li>
+<span class="kpiLabel"> Human rhythm index </span>
+                    : irregular pacing consistent with reflective decision cycles.
+                  </li>
+<li>
+<span class="kpiLabel"> Transition flow </span>
+                    : intentional movement between reasoning states.
+                  </li>
+<li>
+<span class="kpiLabel"> Revision depth </span>
+                    : degree of conceptual modification at semantic boundaries.
+                  </li>
+</ul>
+<div class="tiny muted uMt10Lh" id="rcDeterminationSentence"></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section class="grid" id="tab-hr">
+<div class="card">
+<div class="sectionBlock">
+<div class="cardHeader">
+<div class="cardTitle">4. Role Fit Signals</div>
+</div>
+<div class="tiny muted uNoteTight2">
+              Explores alignment between observed reasoning patterns and role-specific cognitive
+              demands.
+            </div>
+<!-- Combined layout: left column (summary + fit), right column (vertical inference flow) -->
+<div class="twoCol roleFitGrid">
+<!-- LEFT: Summary + Fit chart -->
+<div class="roleFitLeftCol">
+<div class="panel">
+<div class="small">Cognitive Style Summary</div>
+<div class="tiny muted uMt6" id="hrProfile1"></div>
+<div class="tiny muted uMt6" id="hrRecommendedRolesLine"></div>
+<div class="kpiRow uMt10" id="hrKpis"></div>
+<div class="tiny muted uMt11" id="hrProfile2"></div>
+</div>
+<div class="chartBox">
+<div class="chartTitleText">Job Role Fit</div>
+<div class="chartCanvasWrap">
+<canvas id="chartHrFit"> </canvas>
+</div>
+<div class="tiny muted uMt6" id="hrProfile3"></div>
+</div>
+</div>
+<!-- RIGHT: Role fit inference flow (replaces coaching boxes + chart) -->
+<div class="panel roleFitRightCol">
+<div class="small">Role Fit Inference Flow</div>
+<div aria-label="Role Fit Inference Flow" class="rfFlow is-animated">
+<div class="rfRow r1" data-step="1">
+<div aria-hidden="true" class="rfMark"><span class="rfStep"></span></div>
+<div class="rfText">
+<div class="rfTitle">Cognitive Operating Characteristics</div>
+<div class="rfTags">thought control · reasoning mode</div>
+</div>
+</div>
+<div aria-hidden="true" class="rfArrow">↓</div>
+<div class="rfRow r2" data-step="2">
+<div aria-hidden="true" class="rfMark"><span class="rfStep"></span></div>
+<div class="rfText">
+<div class="rfTitle">Reasoning Structure Patterns</div>
+<div class="rfTags">decomposition · linkage · validation · regulation</div>
+</div>
+</div>
+<div aria-hidden="true" class="rfArrow">↓</div>
+<div class="rfRow r3" data-step="3">
+<div aria-hidden="true" class="rfMark"><span class="rfStep"></span></div>
+<div class="rfText">
+<div class="rfTitle">NeuPrint Primary Metrics</div>
+<div class="rfTags">CFF 8 · RSL R1–R8</div>
+</div>
+</div>
+<div aria-hidden="true" class="rfArrow">↓</div>
+<div class="rfRow r4" data-step="4">
+<div aria-hidden="true" class="rfMark"><span class="rfStep"></span></div>
+<div class="rfText">
+<div class="rfTitle">NeuPrint Secondary Interpretations</div>
+<div class="rfTags">Reasoning Level · Stability · Drift</div>
+</div>
+</div>
+<div aria-hidden="true" class="rfArrow">↓</div>
+<div class="rfRow r5" data-step="5">
+<div aria-hidden="true" class="rfMark"><span class="rfStep"></span></div>
+<div class="rfText">
+<div class="rfTitle">Competency Fulfillment Assessment</div>
+<div class="rfTags">OECD aligned · O*NET aligned · reference</div>
+</div>
+</div>
+<div aria-hidden="true" class="rfArrow">↓</div>
+<div class="rfRow r6" data-step="6">
+<div aria-hidden="true" class="rfMark"><span class="rfStep"></span></div>
+<div class="rfText">
+<div class="rfTitle">Job Role Fit</div>
+<div class="rfTags">final alignment signal · decision support</div>
+</div>
+</div>
+</div>
+<!-- Role Fit closing statement (data-bound) -->
+<div class="tiny muted uMt10" id="rfClosing"></div>
+</div>
+</div>
+</div>
+</div></section>
+<!-- International Framework Alignment (logos, grayscale) -->
+<div aria-label="International framework alignment" class="alignmentStrip">
+<div class="alignmentInner">
+<div aria-label="Aligned institutions and frameworks" class="alignmentLogos">
+<div class="alLogo">
+<img alt="OECD" class="alImg" src="OECD_logo.png"/>
+<span class="alFallback"> OECD </span>
+</div>
+<div class="alLogo">
+<img alt="PISA" class="alImg" src="PISA_logo.png"/>
+<span class="alFallback"> PISA </span>
+</div>
+<div class="alLogo">
+<img alt="ETS" class="alImg" src="ETS_logo.png"/>
+<span class="alFallback"> ETS </span>
+</div>
+<div class="alLogo">
+<img alt="APA" class="alImg" src="APA_logo.png"/>
+<span class="alFallback"> APA </span>
+</div>
+<div class="alLogo">
+<img alt="O*NET" class="alImg" src="Onet_logo.png"/>
+<span class="alFallback"> O*NET </span>
+</div>
+<div class="alLogo">
+<img alt="AERA" class="alImg" src="AERA_logo.png"/>
+<span class="alFallback"> AERA </span>
+</div>
+<div class="alLogo">
+<img alt="NCME" class="alImg" src="NCME_logo.png"/>
+<span class="alFallback"> NCME </span>
+</div>
+<div class="alLogo">
+<img alt="AAC&amp;U" class="alImg" src="AACU_logo.png"/>
+<span class="alFallback"> AAC&amp;U </span>
+</div>
+<div class="alLogo">
+<img alt="Cambridge" class="alImg" src="Cambridge_logo.png"/>
+<span class="alFallback"> Cambridge </span>
+</div>
+<div class="alLogo">
+<img alt="IB" class="alImg" src="IB_logo.png"/>
+<span class="alFallback"> IB </span>
+</div>
+<div class="alLogo">
+<img alt="LSAT" class="alImg" src="LSAT_logo.png"/>
+<span class="alFallback"> LSAT </span>
+</div>
+<div class="alLogo">
+<img alt="GMAT" class="alImg" src="GMAT_logo.png"/>
+<span class="alFallback"> GMAT </span>
+</div>
+</div>
+<div class="alignmentNote">
+            NeuPrint’s cognitive frameworks and rubrics are structurally aligned with
+            <span class="em"> internationally recognized assessment and competency systems </span>
+            .
+            <br/>
+            These include
+            <span class="em"> OECD PISA </span>
+            ,
+            <span class="em"> ETS measurement models </span>
+            ,
+            <span class="em"> AERA and NCME evaluation standards </span>
+            , and
+            <span class="em"> AAC&amp;U VALUE rubrics </span>
+            .
+            <br/>
+            They also reflect shared reasoning constructs found in
+            <span class="em"> Cambridge International </span>
+            , the
+            <span class="em"> International Baccalaureate (IB) </span>
+            , and reasoning assessments such as the
+            <span class="em"> LSAT and GMAT </span>
+            .
+          </div>
+</div>
+</div>
+<div class="footer">
+<div>Copyright © 2026 Neuprint. All rights reserved.</div>
+<div>U.S. entity in formation.</div>
+</div>
+</div>
+<script id="dev-report-json" type="application/json">
+{
+
+  "meta":  {
+
+    "input_language": "EN",
+    "generated_at_utc": "2025-03-14T10:22:11Z",
+    "verify_url": "https://neuprint.ai/verify",
+    "verification_id": "NP-2025-0314-0007",
+    "decision_compression_quote": "Demonstrates exploratory reasoning that converts observation into cross-domain conceptual inquiry, but prioritizes ideational expansion over evaluative convergence, indicating the need to reinforce counterfactual testing and disciplined conclusion consolidation."
+
+  },
+  "chips":  {
+
+    "rsl_level_short_name": "L3 Structured",
+    "cff_final_type_chip_label": "Reasoning Simulator",
+    "rsl_fri_score": 3.72,
+    "rc_final_determination": "Human",
+    "rfs_top_group_name": "Strategy·Analysis·Policy"
+
+  },
+  "rsl":  {
+
+    "level":  {
+
+      "short_name": "L3 Structured",
+      "definition": "Organized reasoning components with partial coordination across dimensions."
+
+    },
+    "fri":  {
+
+      "score": 3.72,
+      "interpretation": "Your reasoning structure is stable in most situations. Connections and evaluations usually remain consistent."
+
+    },
+    "cohort":  {
+
+      "top_percent_label": "Top 38%",
+      "interpretation": "Developing structure, with several reasoning patterns beginning to align relative to comparable peers.",
+      "percentile_0to1": 0.62
+
+    },
+    "sri":  {
+
+      "score": 0.92,
+      "interpretation": "Strong internal coherence is observed. Structural interpretation can be stated with higher confidence."
+
+    },
+    "summary":  {
+
+      "one_line": "Connects writers, history, and ideas over time but stops short of fully tracing one line to its end.",
+      "paragraph": "Thinking moves by linking personal reflection with historical patterns and named examples. Attention shifts across time, returning to earlier ideas with added nuance. Values shape how claims are framed and occasionally redirect the line of thought. Some paths pause after comparison rather than being fully followed through."
+
+    },
+    "dimensions": [
+      {
+
+      "code": "R1",
+      "label": "Interpretation",
+      "score_1to5": 4,
+      "observation": "Interprets the guiding questions by unpacking what the inquiry seeks to examine and why it matters. As a result, the response follows how each question invites reflection on meaning, history, and change rather than surface definition. However one further step could trace how a single constraint narrows that purpose at a specific moment."
+
+    },
+      {
+
+      "code": "R2",
+      "label": "Issue Decomposition",
+      "score_1to5": 4,
+      "observation": "Breaks the discussion into linked issues such as history, identity, politics, and literary form. As a result, the reasoning moves by showing how one element leads to or reacts against another across time. One next step could follow one issue through a single cause-and-effect chain without branching."
+
+    },
+      {
+
+      "code": "R3",
+      "label": "Evidence Quality",
+      "score_1to5": 3,
+      "observation": "Uses named writers, historical periods, and well-known works as supporting material. As a result, claims are grounded in recognizable examples rather than unsupported assertion. One next step could pause to compare how two sources differ in reliability or reach."
+
+    },
+      {
+
+      "code": "R4",
+      "label": "Reasoning & Counterfactuals",
+      "score_1to5": 4,
+      "observation": "Explores how ideas might appear differently under alternate historical or political conditions. As a result, the reasoning considers what follows if certain fears, values, or trends dominate at a given time. One next step could hold two possible outcomes side by side before moving on."
+
+    },
+      {
+
+      "code": "R5",
+      "label": "Coherence & Clarity",
+      "score_1to5": 4,
+      "observation": "Moves smoothly from personal experience to historical survey and then to present-day observation. As a result, ideas connect through clear transitions that keep the line of thought easy to follow. One next step could linger briefly at a transition point before shifting topics."
+
+    },
+      {
+
+      "code": "R6",
+      "label": "Metacognition & Self-repair",
+      "score_1to5": 4,
+      "observation": "Revisits earlier judgments and revises them after new exposure and reflection. As a result, the thinking shows awareness of limits in prior views and adjustment over time. One next step could name a specific trigger that prompted the shift more precisely."
+
+    },
+      {
+
+      "code": "R7",
+      "label": "Ethical / Societal Framing",
+      "score_1to5": 4,
+      "observation": "Frames ideas through values such as democracy, freedom, and fairness while acknowledging tension among them. As a result, conclusions shift depending on which value is emphasized at a given moment. One next step could set a clear boundary where one value outweighs another."
+
+    },
+      {
+
+      "code": "R8",
+      "label": " Perspective Flexibility",
+      "score_1to5": 4,
+      "observation": "Moves between personal, historical, literary, and political viewpoints to reconsider claims. As a result, conclusions change as the vantage point changes across eras and roles. One next step could explicitly contrast two viewpoints before settling on one."
+
+    }
+    ]
+
+  },
+  "cff":  {
+
+    "final_type":  {
+
+      "chip_label": "Reasoning Simulator",
+      "label": "Ax-4. Reasoning Simulator",
+      "confidence": 0.81,
+      "interpretation": "Reasoning Simulator reflects a reasoning structure that appears coherent and well-formed, while transitions and revisions are driven by simulated control patterns rather than direct intent formation."
+
+    },
+    "pattern":  {
+
+      "primary_label": "Reflective Explorer",
+      "secondary_label": "Evidence Weaver",
+      "primary_description": "Reflective Explorer shows active self-revision and exploratory restructuring during reasoning. Thought progresses through reflection, reassessment, and adaptive refinement.",
+      "secondary_description": "Evidence Weaver emphasizes linking claims with supporting material. Reasoning strength lies in evidence connectivity rather than abstract inference."
+
+    },
+    "labels": [
+    "AAS",
+    "CTF",
+    "RMD",
+    "RDX",
+    "EDS",
+    "IFD",
+    "KPF-Sim",
+    "TPS-H"
+    ],
+    "values_0to1": [
+    0.71,
+    0.64,
+    0.58,
+    0.73,
+    0.66,
+    0.79,
+    "N/A",
+    "N/A"
+    ]
+
+  },
+  "rc":  {
+
+    "reasoning_control_distribution":  {
+
+      "final_determination": "Human",
+      "Human": "82%",
+      "Hybrid": "9%",
+      "AI": "9%"
+
+    },
+    "summary": "Human-led reasoning with sustained reflective control and stable structural revision. The current position is centered within the human reasoning cluster.",
+    "control_pattern": "Deep Reflective Human",
+    "reliability_band": "HIGH",
+    "band_rationale": "Reasoning decisions originate from explicit human-driven revision and counter-evaluative judgment rather than automated continuation flow.",
+    "observed_structural_signals":  {
+      "1": "Revision activity occurs at semantic decision boundaries.",
+      "2": "Argument order adjustments correspond to logical correction.",
+      "3": "Consistency checks appear across structural transitions.",
+      "4": "No sustained repetitive propagation is observed across reasoning segments."
+
+    },
+    "pattern_interpretation": "A high human proportion indicates stable human-led control at structural decision boundaries across the task.",
+    "structural_control_signals":  {
+
+      "structural_variance": 0.42,
+      "human_rhythm_index": 0.67,
+      "transition_flow": 0.58,
+      "revision_depth": 0.31
+
+    },
+    "determination_sentence": "The combined signal profile supports classification as human-controlled reasoning."
+
+  },
+  "rfs":  {
+
+    "top_groups": [
+      {
+
+      "group_name": "Strategy·Analysis·Policy",
+      "percent": 78,
+      "roles": [
+      "Strategy Analyst",
+      "Management Analyst",
+      "Policy Analyst",
+      "Economic Researcher",
+      "Financial Analyst",
+      "Risk Analyst",
+      "Compliance Officer",
+      "Internal Auditor"
+      ],
+      "recommended_role": "Strategy Analyst"
+
+    },
+      {
+
+      "group_name": "Data·AI·Intelligence",
+      "percent": 74,
+      "roles": [
+      "Data Analyst",
+      "Data Scientist",
+      "Business Intelligence Analyst",
+      "Machine Learning Analyst",
+      "Statistician",
+      "Operations Research Analyst",
+      "Information Security Analyst"
+      ],
+      "recommended_role": "Data Scientist"
+
+    },
+      {
+
+      "group_name": "Engineering·Technology·Architecture",
+      "percent": 68,
+      "roles": [
+      "Software Engineer",
+      "Systems Architect",
+      "Cloud Engineer",
+      "DevOps Engineer",
+      "Network Architect",
+      "QA Engineer",
+      "Safety Systems Engineer"
+      ],
+      "recommended_role": "Systems Architect"
+
+    }
+    ],
+    "primary_pattern": "Reflective Explorer",
+    "representative_phrase": "structured but exploratory",
+    "summary_lines": [
+    "Strategy·Analysis·Policy: 78%",
+    "Data·AI·Intelligence: 74%",
+    "Engineering·Technology·Architecture: 68%"
+    ],
+    "recommended_roles_top3": [
+    "Strategy Analyst",
+    "Data Scientist",
+    "Systems Architect"
+    ],
+    "recommended_roles_line": "Recommended roles include: Strategy Analyst, Data Scientist, Systems Architect.",
+    "pattern_interpretation": "Strong in conceptual structuring and strategic direction setting, this profile is well suited for designing large-scale frameworks and guiding decision alignment across complex constraints."
+
+  }
+
+}
+</script>
+<script>
+
+/* Script 2: Bootstrap / helpers */
+
+(function() {
+
+  'use strict';
+  function getByPath(obj, path) {
+
+    const parts = path.split('.');
+    let cur = obj;
+    for(const p of parts) {
+
+      if(cur && Object.prototype.hasOwnProperty.call(cur, p)) cur = cur[p];
+      else return undefined;
+
+    }
+
+  return cur;
+
+}
+
+function requirePath(obj, path) {
+
+  const v = getByPath(obj, path);
+  if(v === undefined || v === null || v === '') {
+
+    throw new Error('[NeuPrint] Missing required field: ' + path);
+
+  }
+
+return v;
+
+}
+
+function buildLegacy(r) {
+
+  const meta = r.meta ||  {
+
+  };
+const chips = r.chips ||  {
+
+};
+const rsl = r.rsl ||  {
+
+};
+const cff = r.cff ||  {
+
+};
+const rc = r.rc ||  {
+
+};
+const rfs = r.rfs ||  {
+
+};
+
+const legacy =  {
+
+};
+
+legacy.meta = meta;
+legacy.assessment_id = meta.verification_id || meta.assessment_id || '';
+
+legacy.hero =  {
+
+  decision_compression_quote: meta.decision_compression_quote || '',
+  chips:  {
+
+    rsl_level: chips.rsl_level_short_name || '',
+    fri: chips.rsl_fri_score,
+    determination: chips.cff_final_type_chip_label || '',
+    control: chips.rc_final_determination || '',
+    role_fit: chips.rfs_top_group_name || '',
+
+    confidence_index: (cff.final_type && cff.final_type.confidence != null) ? cff.final_type.confidence : null,
+
+  }
+
+};
+
+legacy.rsl = rsl;
+
+const finalType = cff.final_type ||  {
+
+};
+const pattern = cff.pattern ||  {
+
+};
+
+legacy.cff = Object.assign( {
+
+}, cff);
+
+legacy.cff.final_determination_label = finalType.chip_label || finalType.label || '';
+legacy.cff.final_determination_type_confidence = (finalType.confidence != null) ? Number(finalType.confidence) : null;
+legacy.cff.final_determination_explanation = finalType.interpretation || '';
+
+legacy.cff.observed_patterns =  {
+
+  primary_label: pattern.primary_label || '',
+  secondary_label: pattern.secondary_label || '',
+  primary_secondary_sentence: (pattern.primary_label && pattern.secondary_label)
+  ? ('Primary pattern is ' + pattern.primary_label + ' and secondary pattern is ' + pattern.secondary_label + '.')
+  : '',
+  primary_description: pattern.primary_description || '',
+  secondary_description: pattern.secondary_description || '',
+
+};
+
+const labels = Array.isArray(cff.labels) ? cff.labels : [];
+const vals01 = Array.isArray(cff.values_0to1) ? cff.values_0to1 : [];
+const indArr = [];
+const indObj =  {
+
+};
+labels.forEach((code, i) =>  {
+
+  const c = String(code || '').trim();
+  if (!c) return;
+  const v = (i < vals01.length) ? vals01[i] : null;
+  const num = (v == null || v === 'N/A') ? null : Number(v);
+  indArr.push( {
+    code: c, value_0to1: (Number.isFinite(num) ? num : null)
+  });
+indObj[c] = (Number.isFinite(num) ? num : null);
+
+});
+legacy.cff.indicators = indArr.length ? indArr : (legacy.cff.indicators ||  {
+
+});
+legacy.cff.radar =  {
+
+  labels: labels.slice(),
+  values_0to1: vals01.slice(),
+
+};
+
+const dist = rc.reasoning_control_distribution ||  {
+
+};
+
+const parsePct = (v) =>  {
+
+  if (v == null) return null;
+  if (typeof v === 'string')  {
+
+    const n = Number(String(v).trim().replace('%',''));
+    return Number.isFinite(n) ? n : null;
+
+  }
+
+const n = Number(v);
+return Number.isFinite(n) ? n : null;
+
+};
+
+legacy.agency =  {
+
+  control_label: dist.final_determination || chips.rc_final_determination || '',
+  control_pattern: rc.control_pattern || '',
+  reliability_band: rc.reliability_band || '',
+  band_rationale: rc.band_rationale || '',
+  section_lead: rc.summary || '',
+  summary: rc.summary || '',
+  pattern_interpretation: rc.pattern_interpretation || '',
+
+  observed_structural_signals: (function(){
+    const raw = rc.observed_structural_signals;
+    if (Array.isArray(raw)) return raw;
+    if (raw && typeof raw === 'object') {
+      if (Array.isArray(raw.bullets)) return raw.bullets;
+      const keys = Object.keys(raw).filter((k)=>/^\d+$/.test(k)).sort((a,b)=>Number(a)-Number(b));
+      if (keys.length) return keys.map((k)=>raw[k]);
+    }
+    return [];
+  })(),
+
+  distribution:  {
+
+    human_pct: parsePct(dist.Human),
+    hybrid_pct: parsePct(dist.Hybrid),
+    ai_pct: parsePct(dist.AI),
+    human: dist.Human,
+    hybrid: dist.Hybrid,
+    ai: dist.AI,
+
+  },
+
+};
+
+legacy.rc = rc;
+
+const topGroups = Array.isArray(rfs.top_groups) ? rfs.top_groups : [];
+
+let trackScores = [];
+if (Array.isArray(rfs.summary_lines))  {
+
+  trackScores = rfs.summary_lines.map((s) =>  {
+
+    const str = String(s || '');
+    const m = str.match(/^(.+?)\s*:\s*([0-9.]+)\s*%/);
+    if (!m) return null;
+    return  {
+      track: m[1].trim(), pct: Number(m[2])
+    };
+
+}).filter(Boolean);
+
+}
+
+const jobRoleFit = topGroups.map((g) => ( {
+
+  track: g.group_name || g.group || g.track || '',
+  roles: Array.isArray(g.roles) ? g.roles : [],
+
+})).filter((g)=>g.track);
+
+legacy.role_fit =  {
+
+  cognitive_style_summary: (rfs.primary_pattern ? (rfs.primary_pattern + ', ' + (rfs.representative_phrase || '') + '.') : ''),
+  recommended_roles_line: rfs.recommended_roles_line || '',
+  profile_statement: rfs.pattern_interpretation || '',
+  track_scores: trackScores,
+  job_role_fit: jobRoleFit,
+
+};
+
+legacy.rfs = rfs;
+
+return legacy;
+
+}
+
+try {
+
+  const el = document.getElementById('dev-report-json');
+  if(!el || !el.textContent) throw new Error('[NeuPrint] dev-report-json missing');
+  const raw = JSON.parse(el.textContent);
+  window.NP_UI_LABELS = (raw && raw.ui_labels) ? raw.ui_labels : {};
+
+  [
+  'meta.verify_url',
+  'meta.verification_id',
+  'meta.decision_compression_quote',
+  'chips.rsl_level_short_name',
+  'chips.cff_final_type_chip_label',
+  'chips.rsl_fri_score',
+  'chips.rc_final_determination',
+  'chips.rfs_top_group_name',
+  'rsl.level.short_name',
+  'rsl.fri.score',
+  'rsl.cohort.top_percent_label',
+  'rsl.sri.score',
+  'cff.final_type.chip_label',
+  'cff.final_type.confidence',
+  'rc.determination_sentence'
+].forEach(function(p){
+  try{ requirePath(raw,p); }
+  catch(e){ console.warn('[NeuPrint] missing path:', p); }
+});
+
+window.REPORT_RAW = raw;
+window.REPORT = buildLegacy(raw);
+
+}
+catch(e) {
+
+  console.error(e);
+
+}
+
+})();
+</script>
+<script>
+
+/* Script 3: Renderer */
+
+(function() {
+
+  'use strict';
+  if(!document.documentElement.classList.contains('npReport-scope')) return;
+
+  const IS_MOBILE = window.matchMedia('(max-width: 680px)').matches
+  const MOBILE_CHART_START_DELAY = 10
+  const NP_DEBUG = false
+
+  function __np_setArcTableLayout()  {
+
+    try  {
+
+      const isMobile = window.matchMedia('(max-width: 680px)').matches
+      const tbody = document.getElementById('rslResultsByDimension')
+      if (!tbody) return
+
+      const rows = Array.from(tbody.querySelectorAll('tr'))
+      rows.forEach((tr) =>  {
+
+        if (!tr.dataset.npArcOrig)  {
+
+          tr.dataset.npArcOrig = tr.innerHTML
+
+        }
+
+      if (isMobile)  {
+
+        if (tr.dataset.npArcMode === 'mobile') return
+        tr.innerHTML = tr.dataset.npArcOrig
+
+        const tds = tr.querySelectorAll('td')
+        if (tds.length < 3)  {
+
+          tr.dataset.npArcMode = 'mobile'
+          return
+
+        }
+
+      const dimTd = tds[0]
+      const scoreTd = tds[1]
+      const obsTd = tds[2]
+
+      const dimText = (dimTd.textContent || '').trim()
+      const scoreText = (scoreTd.textContent || '').trim()
+      const obsText = (obsTd.textContent || '').trim()
+
+      dimTd.colSpan = 2
+      scoreTd.remove()
+
+      dimTd.innerHTML = ''
+
+      const head = document.createElement('div')
+      head.className = 'arcHeadLine'
+
+      const label = document.createElement('span')
+      label.className = 'arcDimLabel'
+      label.textContent = dimText
+
+      const scoreWrap = document.createElement('span')
+      scoreWrap.className = 'arcScoreWrap'
+
+      const scoreWord = document.createElement('span')
+      scoreWord.className = 'arcScoreWord'
+      scoreWord.textContent = String((window.NP_UI_LABELS && window.NP_UI_LABELS.score_word) || '')
+
+      const scoreDot = document.createElement('span')
+      scoreDot.className = 'arcScoreDot'
+      scoreDot.textContent = scoreText
+
+      scoreWrap.appendChild(scoreWord)
+      scoreWrap.appendChild(scoreDot)
+
+      head.appendChild(label)
+      head.appendChild(scoreWrap)
+      dimTd.appendChild(head)
+
+      if (obsText)  {
+
+        const obs = document.createElement('div')
+        obs.className = 'arcObsMobile'
+        obs.textContent = obsText
+        dimTd.appendChild(obs)
+
+      }
+
+    obsTd.textContent = obsText
+
+    tr.dataset.npArcMode = 'mobile'
+
+  }
+else  {
+
+  if (tr.dataset.npArcMode === 'desktop' || !tr.dataset.npArcOrig) return
+  tr.innerHTML = tr.dataset.npArcOrig
+  tr.dataset.npArcMode = 'desktop'
+
+}
+
+})
+
+}
+catch (e)  {
+
+  NP_DEBUG && console.warn('[NeuPrint] RSL responsive layout failed:', e)
+
+}
+
+}
+
+window.addEventListener(
+'resize',
+() =>  {
+
+  __np_setArcTableLayout()
+
+},
+{
+  passive: true
+},
+)
+window.addEventListener(
+'orientationchange',
+() =>  {
+
+  __np_setArcTableLayout()
+
+},
+{
+  passive: true
+},
+)
+
+function __np_initRoleFitFlowOnView() {
+
+  try {
+
+    const sec = document.getElementById('tab-hr');
+    const flow = sec ? sec.querySelector('.rfFlow.is-animated') : null;
+    if(!sec || !flow) return;
+
+    const rows = Array.from(flow.querySelectorAll('.rfRow'));
+    const baseDelay = 210;
+    // ms between boxes
+    rows.forEach((row, i)=> {
+
+      row.style.animationDelay = (i*baseDelay) + 'ms';
+
+    });
+
+  const arrows = Array.from(flow.querySelectorAll('.rfArrow'));
+  arrows.forEach((a, i)=> {
+
+    a.style.animationDelay = ((i*baseDelay) + Math.floor(baseDelay*0.55)) + 'ms';
+
+  });
+
+flow.classList.remove('rf-start');
+
+let started = false;
+const start = ()=> {
+
+  if(started) return;
+  started = true;
+  flow.classList.add('rf-start');
+
+};
+
+const isVisible = ()=> {
+
+  if(!flow || !flow.isConnected) return false;
+  if(flow.offsetParent === null) return false;
+  const r = flow.getBoundingClientRect();
+  const vh = window.innerHeight || document.documentElement.clientHeight;
+  const vw = window.innerWidth || document.documentElement.clientWidth;
+
+  return (r.bottom > 0 && r.right > 0 && r.top < vh && r.left < vw);
+
+};
+
+if('IntersectionObserver' in window) {
+
+  try {
+
+    const io = new IntersectionObserver((entries)=> {
+
+      for(const e of entries) {
+
+        if(e.isIntersecting) {
+
+          start();
+          io.disconnect();
+          break;
+
+        }
+
+    }
+
+}, {
+root:null, threshold:0.12, rootMargin:'0px 0px -10% 0px'
+});
+io.observe(flow);
+
+}
+catch(_e) {
+
+}
+
+}
+
+if(isVisible()) start();
+
+const tryStartOnEvent = ()=> {
+
+  if(started) return;
+  if(isVisible()) start();
+
+};
+window.addEventListener('scroll', tryStartOnEvent,  {
+  passive:true
+});
+window.addEventListener('resize', tryStartOnEvent,  {
+  passive:true
+});
+window.addEventListener('click', tryStartOnEvent,  {
+  passive:true
+});
+
+if('MutationObserver' in window) {
+
+  try {
+
+    const mo = new MutationObserver(()=> {
+      tryStartOnEvent();
+
+    });
+  mo.observe(sec,  {
+    attributes:true, attributeFilter:['style','class'], subtree:true
+  });
+
+}
+catch(_e) {
+
+}
+
+}
+
+window.setTimeout(()=> {
+  if(!started) start();
+
+}, 1200);
+
+}
+catch(e) {
+
+}
+
+}
+
+window.renderNeuPrint = function (reportObject)  {
+
+  'use strict'
+
+  const NP_DEBUG = false
+  window.onerror = function (msg, src, line, col, err)  {
+
+    try  {
+
+      NP_DEBUG && console.error('SCRIPT ERROR:', msg, 'at', line + ':' + col)
+
+    }
+  catch (e)  {
+
+  }
+
+}
+
+const REPORT = (typeof reportObject !== 'undefined' ? reportObject : null) || window.report || window.DEV_REPORT || null
+if (!REPORT)  {
+
+  NP_DEBUG && console.warn('[NeuPrint] No report data found. Provide window.report or DEV JSON.')
+  return
+
+}
+
+function $(id)  {
+
+  return document.getElementById(id)
+
+}
+
+function esc(v)  {
+
+  return String(v ?? '').replace(/[&<>"']/g, function (ch) {
+    return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]
+  })
+}
+
+function setText(id, value) {
+  const el = $(id)
+  if (el) el.textContent = String(value)
+}
+function clamp01(x) {
+  const n = Number(x)
+  if (!Number.isFinite(n)) return 0
+  return Math.max(0, Math.min(1, n))
+}
+function pct01ToPctInt(x) {
+  return Math.round(clamp01(x) * 100)
+}
+
+function pctTripletFromMix(mix) {
+
+  if (mix && mix._pct) {
+    const h = Math.max(0, Math.min(100, Number(mix._pct.human ?? 0)))
+    const y = Math.max(0, Math.min(100, Number(mix._pct.hybrid ?? 0)))
+    const a = Math.max(0, Math.min(100, Number(mix._pct.ai ?? 0)))
+    const s = h + y + a
+    if (s === 100) return [h, y, a]
+  }
+
+const raw = [clamp01(mix?.human ?? 0) * 100, clamp01(mix?.hybrid ?? 0) * 100, clamp01(mix?.ai ?? 0) * 100]
+const base = raw.map((v) => Math.floor(v))
+let rem = 100 - (base[0] + base[1] + base[2])
+const frac = raw.map((v, i) => ({ i, f: v - base[i] })).sort((a, b) => b.f - a.f)
+for (let k = 0; k < frac.length && rem > 0; k++) {
+  base[frac[k].i] += 1
+  rem -= 1
+}
+
+const s2 = base[0] + base[1] + base[2]
+if (s2 !== 100) {
+  base[0] += 100 - s2
+}
+return base
+}
+function formatPct01(x) {
+  return pct01ToPctInt(x) + '%'
+}
+function fmt2(x) {
+  const n = Number(x)
+  if (!Number.isFinite(n)) return ''
+  return n.toFixed(2)
+}
+
+function getMixFromReport(r) {
+
+  function parse01(v) {
+    if (v == null) return null
+    if (typeof v === 'string') {
+      const s = v.trim().replace('%', '')
+      if (!s) return null
+      const n = Number(s)
+      if (!Number.isFinite(n)) return null
+      return clamp01(n > 1 ? n / 100 : n)
+    }
+  const n = Number(v)
+  if (!Number.isFinite(n)) return null
+  return clamp01(n > 1 ? n / 100 : n)
+}
+
+function normTriplet(h, y, a) {
+  const hh = clamp01(h)
+  const yy = clamp01(y)
+  const aa = clamp01(a)
+  const s = hh + yy + aa
+  if (s <= 0) return { human: 0, hybrid: 0, ai: 0 }
+  return { human: hh / s, hybrid: yy / s, ai: aa / s }
+}
+
+try {
+
+  const d = r && r.agency && r.agency.distribution ? r.agency.distribution : null
+  if (d && (d.human_pct != null || d.hybrid_pct != null || d.ai_pct != null)) {
+
+    const yp0 = d.hybrid_pct == null ? null : Number(d.hybrid_pct)
+    const ap0 = d.ai_pct == null ? null : Number(d.ai_pct)
+    let hp0 = d.human_pct == null ? null : Number(d.human_pct)
+
+    const yp = Math.max(0, Math.min(100, Number.isFinite(yp0) ? yp0 : 0))
+    const ap = Math.max(0, Math.min(100, Number.isFinite(ap0) ? ap0 : 0))
+    if (hp0 == null && (d.hybrid_pct != null || d.ai_pct != null)) {
+      hp0 = 100 - yp - ap
+    }
+  const hp = Math.max(0, Math.min(100, Number.isFinite(hp0) ? hp0 : 0))
+  const out = normTriplet(hp / 100, yp / 100, ap / 100)
+  out._pct = { human: Math.round(hp), hybrid: Math.round(yp), ai: Math.round(ap) }
+  return out
+}
+
+const alt = r && r.reasoning_control && r.reasoning_control.distribution ? r.reasoning_control.distribution : null
+if (alt && (alt.human != null || alt.hybrid != null || alt.ai != null)) {
+  const h = parse01(alt.human ?? 0) ?? 0
+  const y = parse01(alt.hybrid ?? 0) ?? 0
+  const a = parse01(alt.ai ?? 0) ?? 0
+  return normTriplet(h, y, a)
+}
+
+const mix = r && r.ai && r.ai.mix_ratio ? r.ai.mix_ratio : null
+if (mix && (mix.human != null || mix.hybrid != null || mix.ai != null)) {
+  const y = parse01(mix.hybrid ?? 0) ?? 0
+  const a = parse01(mix.ai ?? 0) ?? 0
+  let h = parse01(mix.human)
+
+  if (h == null && (mix.hybrid != null || mix.ai != null)) {
+    h = clamp01(1 - y - a)
+  }
+
+if (h != null && y + a > 0) {
+  const s = h + y + a
+  if (s > 1.001) {
+    h = clamp01(1 - y - a)
+  }
+}
+return normTriplet(h ?? 0, y, a)
+}
+return { human: 0, hybrid: 0, ai: 0 }
+} catch (e) {
+return { human: 0, hybrid: 0, ai: 0 }
+}
+}
+
+function getAgencyPatternInterpretation(r){
+  try{
+    const a = r && r.agency ? r.agency : null;
+    const candidates = [
+    a && a.distribution && a.distribution.pattern_interpretation,
+    a && a.reasoning_control_distribution && a.reasoning_control_distribution.pattern_interpretation,
+    a && a.control_distribution && a.control_distribution.pattern_interpretation,
+    a && a.reasoning_control_distribution && a.reasoning_control_distribution.patternInterpretation,
+    a && a.distribution && a.distribution.patternInterpretation,
+    a && a.pattern_interpretation,
+    a && a.patternInterpretation,
+  ];
+  for(const v of candidates){
+    if(typeof v === 'string' && v.trim()) return v.trim();
+  }
+}catch(_e){}
+return '';
+}
+
+function getConfidenceIndex01(r) {
+
+  function parse01(v) {
+    if (v == null) return null
+    if (typeof v === 'string') {
+      const s = v.trim().replace('%', '')
+      if (s === '') return null
+      const n = Number(s)
+      if (!isFinite(n)) return null
+      return clamp01(n > 1 ? n / 100 : n)
+    }
+  const n = Number(v)
+  if (!isFinite(n)) return null
+  return clamp01(n > 1 ? n / 100 : n)
+}
+
+const candidates = [
+r?.hero?.chips?.confidence_index,
+r?.hero?.chips?.confidence,
+r?.hero?.chips?.confidence_pct,
+r?.hero?.confidence_index,
+r?.hero?.confidence,
+r?.hero?.confidence_pct,
+r?.classification_confidence,
+r?.confidence_index,
+r?.confidence,
+r?.forensic?.confidence,
+r?.forensic?.confidence_index,
+r?.determination?.confidence,
+r?.determination?.confidence_index,
+r?.ai?.confidence_index,
+]
+
+for (const v of candidates) {
+  const out = parse01(v)
+  if (out != null) return out
+}
+
+const cff1 = parse01(r?.cff?.final_determination?.type_confidence)
+if (cff1 != null) return cff1
+const cff2 = parse01(r?.cff?.observed_patterns?.type_confidence)
+if (cff2 != null) return cff2
+
+return 0
+}
+
+function getReasoningReliabilityBand(r) {
+
+  const direct = r?.reasoning_control?.reliability_band
+  if (direct) return String(direct)
+
+  const s0 = r?.agency?.signals && r.agency.signals[0] ? r.agency.signals[0] : null
+  const sigBand = s0 && s0.detection_reliability_band ? String(s0.detection_reliability_band) : null
+  if (sigBand) return sigBand
+
+  const metaBand = r?.agency?.control_pattern_meta?.default_reliability_band
+  if (metaBand) {
+    const b = String(metaBand)
+    if (b.startsWith('HIGH')) return 'HIGH'
+    if (b.startsWith('MEDIUM')) return 'MEDIUM'
+    if (b.startsWith('LOW')) return 'LOW'
+  }
+return ''
+}
+
+function getReasoningControlPattern(r) {
+  const rc = r?.reasoning_control?.control_pattern
+  if (rc) return String(rc)
+  const meta = r?.agency?.control_pattern_meta?.control_pattern
+  if (meta) return String(meta)
+  const s0 = r?.agency?.signals && r.agency.signals[0] ? r.agency.signals[0] : null
+  const p = s0 && s0.pattern_label ? s0.pattern_label : null
+  return p ? String(p) : ''
+}
+
+function getReasoningControlInterpretation(r) {
+  const rc = r?.reasoning_control
+
+  const rcFinal = r?.rc
+  if (rcFinal?.band_rationale) return String(rcFinal.band_rationale)
+  if (rc?.band_rationale_en || rc?.distribution_interpretation_en) {
+    return String(rc.band_rationale_en || rc.distribution_interpretation_en || '')
+  }
+const meta = r?.agency?.control_pattern_meta
+if (meta?.band_rationale_en || meta?.distribution_interpretation_en) {
+  return String(meta.band_rationale_en || meta.distribution_interpretation_en || '')
+}
+const s0 = r?.agency?.signals && r.agency.signals[0] ? r.agency.signals[0] : null
+if (s0?.label) return String(s0.label)
+return ''
+}
+
+const report = REPORT
+
+const css = getComputedStyle(document.documentElement)
+const THEME = {
+  text: css.getPropertyValue('--text').trim(),
+  accentA: css.getPropertyValue('--accentA').trim(),
+  accentB: css.getPropertyValue('--accentB').trim(),
+  accentC: css.getPropertyValue('--accentC').trim(),
+  accentD: css.getPropertyValue('--accentD').trim(),
+  accentE: css.getPropertyValue('--accentE').trim(),
+  pillB: css.getPropertyValue('--pillB').trim(),
+  pillD: css.getPropertyValue('--pillD').trim(),
+  pillN: css.getPropertyValue('--pillN').trim(),
+}
+
+const CHART_ANIM_MS = parseInt(css.getPropertyValue('--chartAnimDuration'), 10) || 1400
+const CHART_DELAY_MS = parseInt(css.getPropertyValue('--chartAnimDelay'), 10) || 180
+
+if (window.Chart) {
+  Chart.defaults.font.family =
+  '"Barlow", system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif'
+  Chart.defaults.font.size = 11
+  Chart.defaults.color = THEME.text || '#0f172a'
+}
+
+function roundRectPath(ctx, x, y, w, h, r) {
+  const rr = Math.max(0, Math.min(r, Math.min(w, h) / 2))
+  ctx.beginPath()
+  ctx.moveTo(x + rr, y)
+  ctx.arcTo(x + w, y, x + w, y + h, rr)
+  ctx.arcTo(x + w, y + h, x, y + h, rr)
+  ctx.arcTo(x, y + h, x, y, rr)
+  ctx.arcTo(x, y, x + w, y, rr)
+  ctx.closePath()
+}
+
+function drawLabelBox(ctx, x, y, text, opt) {
+  const padX = opt && opt.padX != null ? opt.padX : 6
+  const padY = opt && opt.padY != null ? opt.padY : 3
+  const radius = opt && opt.radius != null ? opt.radius : 6
+  const font = opt && opt.font ? opt.font : '500 11px Barlow, system-ui, sans-serif'
+  const textColor = opt && opt.textColor ? opt.textColor : '#0f172a'
+  const bg = opt && opt.bg ? opt.bg : '#ffffff'
+  const stroke = opt && opt.stroke ? opt.stroke : 'rgba(226,232,240,.95)'
+  const centerX = !!(opt && opt.centerX)
+
+  ctx.save()
+  ctx.font = font
+  ctx.textBaseline = 'middle'
+
+  const m = ctx.measureText(text)
+  const w = Math.ceil(m.width + padX * 2)
+  const h = Math.ceil(12 + padY * 2)
+
+  const rx = centerX ? Math.round(x - w / 2) : x
+
+  roundRectPath(ctx, rx, y, w, h, radius)
+  ctx.fillStyle = bg
+  ctx.fill()
+  ctx.strokeStyle = getComputedStyle(document.documentElement)
+  .getPropertyValue('--_sigToneC')
+  .trim()
+  ctx.lineWidth = 1
+
+  ctx.fillStyle = textColor
+  ctx.fillText(text, rx + padX, y + h / 2)
+
+  ctx.restore()
+  return { w, h }
+}
+
+function drawLabelDot(ctx, cx, cy, text, opt) {
+  const font = opt && opt.font ? opt.font : '600 10px Barlow, system-ui, sans-serif'
+  const textColor = opt && opt.textColor ? opt.textColor : '#0f172a'
+  const bg = opt && opt.bg ? opt.bg : '#ffffff'
+  const stroke = opt && opt.stroke ? opt.stroke : 'rgba(226,232,240,.95)'
+  const minR = opt && opt.minR != null ? opt.minR : 12
+  const pad = opt && opt.pad != null ? opt.pad : 6
+
+  ctx.save()
+  ctx.font = font
+  ctx.textAlign = 'center'
+  ctx.textBaseline = 'middle'
+
+  const m = ctx.measureText(text)
+  const r = max2(minR, intceil(m.width / 2) + pad)
+
+  ctx.beginPath()
+  ctx.arc(cx, cy, r, 0, Math.PI * 2)
+  ctx.closePath()
+  ctx.fillStyle = bg
+  ctx.fill()
+
+  const tok = getComputedStyle(document.documentElement)
+  .getPropertyValue('--_sigToneC')
+  .trim()
+  ctx.strokeStyle = tok || stroke
+  ctx.lineWidth = 1
+  ctx.stroke()
+
+  ctx.fillStyle = textColor
+  ctx.fillText(text, cx, cy + 0.5)
+
+  ctx.restore()
+  return r
+}
+
+function max2(a, b) {
+  return a > b ? a : b
+}
+function intceil(x) {
+  return Math.ceil(x)
+}
+
+const centerTextPlugin = {
+  id: 'centerTextPlugin',
+  afterDraw(chart) {
+    const opts =
+    (chart.options && chart.options.plugins && chart.options.plugins.centerText) || null
+    if (!opts) return
+
+    const ctx = chart.ctx
+    const meta = chart.getDatasetMeta(0)
+    if (!meta || !meta.data || !meta.data.length) return
+
+    const arc = meta.data[0]
+    const x = arc.x
+    const y = arc.y
+
+    const top = String(opts.top || '')
+    const bottom = String(opts.bottom || '')
+    const yOffset = Number(opts.yOffset || 0)
+
+    const topFont = opts.topFont || '500 14px Barlow, system-ui, sans-serif'
+    const bottomFont = opts.bottomFont || '500 14px Barlow, system-ui, sans-serif'
+
+    ctx.save()
+    ctx.textAlign = 'center'
+    ctx.textBaseline = 'middle'
+
+    ctx.fillStyle = THEME.text || '#0f172a'
+    ctx.font = topFont
+    ctx.fillText(top, x, y - 8 + yOffset)
+
+    ctx.font = bottomFont
+    ctx.fillText(bottom, x, y + 12 + yOffset)
+
+    ctx.restore()
+  },
+}
+
+const barValueLabelsPlugin = {
+  id: 'barValueLabelsPlugin',
+  afterDatasetsDraw(chart) {
+    const opts =
+    (chart.options && chart.options.plugins && chart.options.plugins.barValueLabels) ||
+    null
+    if (!opts) return
+
+    const ctx = chart.ctx
+    const indexAxis = (chart.options && chart.options.indexAxis) || 'x'
+    const fmt = opts.format || 'float2'
+    const color = opts.textColor || THEME.text || '#0f172a'
+
+    const dsIndex = opts.datasetIndex != null ? opts.datasetIndex : 0
+    const meta = chart.getDatasetMeta(dsIndex)
+    if (!meta || meta.hidden) return
+
+    const data = chart.data.datasets[dsIndex].data || []
+    ctx.save()
+
+    for (let i = 0; i < meta.data.length; i++) {
+      const el = meta.data[i]
+      const v = data[i]
+      if (v == null) continue
+
+      let text = ''
+      if (fmt === 'pct') {
+        text = Math.round(Number(v)) + '%'
+      } else if (fmt === 'float1') {
+      text = Number(v).toFixed(1)
+    } else if (fmt === 'float2') {
+    text = Number(v).toFixed(2)
+  } else {
+  text = String(v)
+}
+
+if (indexAxis === 'y') {
+  const x = el.x + 8
+  const y = el.y - 10
+  drawLabelBox(ctx, x, y, text, {
+    textColor: color,
+    bg: '#fff',
+    stroke: 'rgba(226,232,240,.95)',
+    radius: 6,
+  })
+} else {
+const x = el.x
+const y = el.y - 24
+drawLabelBox(ctx, x, y, text, {
+  textColor: color,
+  bg: '#fff',
+  stroke: 'rgba(226,232,240,.95)',
+  radius: 6,
+  centerX: true,
+})
+}
+}
+
+ctx.restore()
+},
+}
+
+const radarValueLabelsPlugin = {
+  id: 'radarValueLabelsPlugin',
+  afterDatasetsDraw(chart) {
+    const opts =
+    (chart.options && chart.options.plugins && chart.options.plugins.radarValueLabels) ||
+    null
+    if (!opts) return
+
+    const dsIndex = opts.datasetIndex != null ? opts.datasetIndex : 0
+    const meta = chart.getDatasetMeta(dsIndex)
+    if (!meta || meta.hidden) return
+
+    const scale = chart.scales && chart.scales.r
+    if (!scale) return
+
+    const labels = chart.data.labels || []
+    const values = chart.data.datasets[dsIndex].data || []
+
+    const ctx = chart.ctx
+    ctx.save()
+    ctx.font = '500 10px Barlow, system-ui, sans-serif'
+    ctx.textAlign = 'center'
+    ctx.textBaseline = 'middle'
+
+    const maxV = typeof scale.max === 'number' ? scale.max : 1
+
+    const outV = maxV * Number(opts.outFactor || 1.15)
+    const extraPx = Number(opts.extraPx || 10)
+
+    for (let i = 0; i < labels.length; i++) {
+      const v = Number(values[i] ?? 0)
+      const txt = fmt2(v)
+
+      const pt = scale.getPointPositionForValue(i, outV)
+
+      const cx = scale.xCenter
+      const cy = scale.yCenter
+      const dx = pt.x - cx
+      const dy = pt.y - cy
+      const len = Math.hypot(dx, dy) || 1
+      const ox = pt.x + (dx / len) * extraPx
+      const oy = pt.y + (dy / len) * extraPx
+
+      drawLabelDot(ctx, ox, oy - 2, txt, {
+        font: '600 10px Barlow, system-ui, sans-serif',
+        textColor: THEME.text || '#0f172a',
+        bg: '#fff',
+        stroke: 'rgba(226,232,240,.95)',
+        minR: 12,
+        pad: 6,
+      })
+  }
+
+ctx.restore()
+},
+}
+
+function _parseColorToRgb(color) {
+  if (!color) return null
+  const c = String(color).trim()
+  let m = c.match(/^rgba?\(([^)]+)\)$/i)
+  if (m) {
+    const parts = m[1].split(',').map((s) => s.trim())
+    const r = parseFloat(parts[0])
+    const g = parseFloat(parts[1])
+    const b = parseFloat(parts[2])
+    if ([r, g, b].every(Number.isFinite)) return { r, g, b }
+  }
+m = c.match(/^#([0-9a-f]{3}|[0-9a-f]{6})$/i)
+if (m) {
+  let hex = m[1]
+  if (hex.length === 3) {
+    hex = hex
+    .split('')
+    .map((ch) => ch + ch)
+    .join('')
+  }
+const n = parseInt(hex, 16)
+const r = (n >> 16) & 255
+const g = (n >> 8) & 255
+const b = n & 255
+return { r, g, b }
+}
+return null
+}
+
+function _rgba(color, alpha, fallbackRgb) {
+  const a = Math.max(0, Math.min(1, Number(alpha)))
+  const fb =
+  fallbackRgb && String(fallbackRgb).trim() ? String(fallbackRgb).trim() : '249,123,23'
+  const rgb = _parseColorToRgb(color)
+  if (rgb) {
+    return (
+    'rgba(' +
+    Math.round(rgb.r) +
+    ',' +
+    Math.round(rgb.g) +
+    ',' +
+    Math.round(rgb.b) +
+    ',' +
+    a.toFixed(3) +
+    ')'
+  )
+}
+return 'rgba(' + fb + ',' + a.toFixed(3) + ')'
+}
+const pulseCurrentPointPlugin = {
+  id: 'pulseCurrentPointPlugin',
+  afterDatasetsDraw(chart) {
+    const opts =
+    (chart.options && chart.options.plugins && chart.options.plugins.pulseCurrentPoint) ||
+    null
+    if (!opts) return
+
+    const dsIndex = opts.datasetIndex != null ? opts.datasetIndex : 3
+    const meta = chart.getDatasetMeta(dsIndex)
+    if (!meta || meta.hidden || !meta.data || !meta.data.length) return
+
+    const point = meta.data[0]
+    if (!point) return
+
+    const pr = point.getProps ? point.getProps(['radius', 'x', 'y'], false) : null
+
+    const px = pr && Number.isFinite(pr.x) ? pr.x : point.x
+    const py = pr && Number.isFinite(pr.y) ? pr.y : point.y
+    const curRadius =
+    pr && Number.isFinite(pr.radius) ? pr.radius : (point.options?.radius ?? 0)
+
+    if (curRadius < 0.5) {
+      return
+    }
+
+  const ctx = chart.ctx
+  const now = performance.now()
+
+  if (!chart.$pulse) {
+    chart.$pulse = { start: now, raf: null, started: false }
+  }
+
+const startDelayMs = Number(opts.startDelayMs || 0)
+
+if (!chart.$pulse.startedAt) {
+  chart.$pulse.startedAt = now
+  chart.$pulse.start = now
+  chart.$pulse.started = false
+}
+
+if (!chart.$pulse.started) {
+  if (now - chart.$pulse.startedAt < startDelayMs) {
+    return
+  }
+chart.$pulse.started = true
+chart.$pulse.start = now
+}
+
+const delayMs = Number(opts.delayMs ?? 0)
+const fadeInMs = Number(opts.fadeInMs ?? 450)
+const period = Number(opts.periodMs || 1200)
+
+const elapsed = now - chart.$pulse.start
+if (elapsed < delayMs) return
+
+const t2 = elapsed - delayMs
+const base = (t2 % period) / period
+
+const rings = Number(opts.rings ?? 4)
+const baseR = 0
+const maxR = Math.max(Number(opts.maxR || 52), curRadius + 18)
+
+const smoothAlpha = (p) => Math.sin(Math.PI * p)
+const smoothGrow = (p) => 1 - Math.cos((Math.PI / 2) * p)
+
+const globalFade = Math.max(0, Math.min(1, t2 / fadeInMs))
+
+for (let j = 0; j < rings; j++) {
+  const phase = (base + j / rings) % 1
+
+  const r = baseR + (maxR - baseR) * smoothGrow(phase)
+  const aMax = Number(opts.maxAlpha ?? 0.22)
+  const a = aMax * smoothAlpha(phase) * globalFade
+
+  if (a < 0.003) continue
+
+  ctx.save()
+  ctx.beginPath()
+  ctx.arc(px, py, r, 0, Math.PI * 2)
+  ctx.strokeStyle = _rgba(opts.color || THEME.accentE || '#f59e0b', a, '249,123,23')
+  ctx.lineWidth = 2
+  ctx.stroke()
+  ctx.restore()
+}
+
+if (!chart.$pulse.raf) {
+  const tick = () => {
+    if (chart && chart.ctx) {
+      try {
+        chart.draw()
+      } catch (_e) {}
+  }
+chart.$pulse.raf = requestAnimationFrame(tick)
+}
+chart.$pulse.raf = requestAnimationFrame(tick)
+}
+},
+beforeDestroy(chart) {
+  if (chart && chart.$pulse && chart.$pulse.raf) {
+    cancelAnimationFrame(chart.$pulse.raf)
+    chart.$pulse.raf = null
+  }
+},
+}
+
+const STACKBAR_LABELS_AFTER_ANIM = {
+  id: 'stackBarLabelsAfterAnim',
+  afterDatasetsDraw(chart, args, pluginOptions) {
+    if (!chart) return
+
+    const isDone = chart.$labelsReady === true || chart.animating === false
+    if (!isDone) return
+
+    const ctx = chart.ctx
+    const ds = chart.data && chart.data.datasets ? chart.data.datasets : []
+    if (!ds.length) return
+
+    const values = ds.map((d) => Number((d.data && d.data[0]) ?? 0))
+    const maxVal = Math.max(...values)
+    const maxIdx = values.indexOf(maxVal)
+
+    const font =
+    pluginOptions && pluginOptions.font
+    ? pluginOptions.font
+    : '700 14px Barlow, system-ui, sans-serif'
+    const color = pluginOptions && pluginOptions.color ? pluginOptions.color : '#ffffff'
+
+    ctx.save()
+    ctx.font = font
+    ctx.fillStyle = color
+    ctx.textAlign = 'center'
+    ctx.textBaseline = 'middle'
+
+    for (let i = 0; i < ds.length; i++) {
+      const meta = chart.getDatasetMeta(i)
+      const el = meta && meta.data ? meta.data[0] : null
+      if (!el) continue
+
+      const v = values[i]
+      if (!Number.isFinite(v) || v <= 0) continue
+
+      const x1 = Number(el.base)
+      const x2 = Number(el.x)
+      const y = Number(el.y)
+
+      if (!Number.isFinite(x1) || !Number.isFinite(x2) || !Number.isFinite(y)) continue
+
+      const xCenter = (x1 + x2) / 2
+
+      const name = ds[i].label || ''
+      const text = i === maxIdx ? (name ? name + ' ' + v + '%' : v + '%') : v + '%'
+
+      ctx.fillText(text, xCenter, y)
+    }
+
+  ctx.restore()
+},
+}
+
+if (window.Chart) {
+  Chart.register(
+  centerTextPlugin,
+  barValueLabelsPlugin,
+  radarValueLabelsPlugin,
+  pulseCurrentPointPlugin,
+  STACKBAR_LABELS_AFTER_ANIM,
+)
+}
+
+function renderReport(r) {
+  renderHero(r)
+  renderHeaderPills(r)
+  renderExecutiveMetrics(r)
+  renderSummaryPanels(r)
+  renderAuthorshipPanels(r)
+  renderCffPanels(r)
+  renderCffTable(r)
+  renderArcPanels(r)
+  renderArcTable(r)
+  renderMapPanels(r)
+  renderStabilityPanels(r)
+  renderIdentityPanels(r)
+  renderAgencySignals(r)
+  renderRoleFit(r)
+  renderMetadata(r)
+}
+
+function renderHero(r) {
+  const meta = r.meta || {}
+  const hero = r.hero || {}
+
+  setText('verifyUrlText', meta.verify_url || meta.verifyUrl || '')
+  setText(
+  'verifyIdText',
+  meta.verification_id || meta.assessment_id || r.assessment_id || '',
+)
+
+setText(
+'heroDecisionQuote',
+hero.decision_compression_quote ||
+hero.decision_quote ||
+hero.decisionQuote ||
+'',
+)
+
+setText(
+'rslOneLine',
+r.rsl?.summary?.one_line || r.rsl?.summary_one_line || r.rsl?.one_liner || '',
+)
+setText(
+'rslSummaryText',
+r.rsl?.summary?.paragraph || r.rsl?.summary_paragraph || r.rsl?.summary_text || '',
+)
+
+const qr = $('qrImg')
+if (qr) {
+  if (meta.qr_src) qr.src = meta.qr_src
+  qr.alt = meta.qr_alt || 'QR'
+}
+}
+
+function setPill(id, value, toneClass) {
+  const el = $(id)
+  if (!el) return
+  if (el.dataset && el.dataset.static === 'true') return
+  el.textContent = String(value)
+  el.className = 'pill ' + (toneClass || 'toneN')
+}
+
+function bestTrackName(trackScores) {
+  if (!trackScores || typeof trackScores !== 'object') return ''
+  let bestName = ''
+  let bestVal = -1
+  for (const [k, v] of Object.entries(trackScores)) {
+    const n = Number(v)
+    if (Number.isFinite(n) && n > bestVal) {
+      bestVal = n
+      bestName = k
+    }
+}
+return bestName
+}
+
+function renderHeaderPills(r) {
+  const chips = r.hero && r.hero.chips ? r.hero.chips : {}
+
+  const fri = chips.fri != null ? Number(chips.fri) : Number(r?.rsl?.fri?.score ?? r?.rsl?.fri_score ?? r?.rsl?.fri ?? 0)
+  const rslLevel = chips.rsl_level || r?.rsl?.overall_level_display || ''
+  const det =
+  chips.determination ||
+  r.cff?.final_determination_label ||
+  ''
+  const control =
+  chips.control ||
+  r.agency?.control_label ||
+  r.agency?.control ||
+  r.reasoning_control?.control_pattern ||
+  ''
+  const roleFit = chips.role_fit || bestTrackName(r.role_fit?.track_scores) || ''
+
+  setPill('reasoningIndexPill', fmt2(Math.max(0, Math.min(5, fri))), 'toneC')
+  setPill('rslPill', rslLevel || '-', 'toneB')
+  setPill('finalDetPill', det || '-', 'toneE')
+  setPill('controlPill', control || '-', 'toneN')
+  setPill('jobFitPill', roleFit || '-', 'toneD')
+}
+
+function renderExecutiveMetrics(r) {
+  const decision = (r?.hero?.chips?.control || r?.agency?.control_label || 'Unknown')
+  const confIdx = getConfidenceIndex01(r)
+
+  setText('mRslMean', fmt2(Number(r.rsl?.fri ?? 0)))
+  const p01 = Number(r.rsl?.percentile_0to1 ?? 0)
+  const top = Math.max(0, Math.min(100, Math.round((1 - p01) * 100)))
+}
+
+function getTopicTagsFromReport(r) {
+
+  const direct = r && Array.isArray(r.topic_tags) ? r.topic_tags : null
+  if (direct && direct.length) return direct
+
+  const heroTags = r && r.hero && Array.isArray(r.hero.topic_tags) ? r.hero.topic_tags : null
+  if (heroTags && heroTags.length) return heroTags
+
+  const dims = r && r.rsl && Array.isArray(r.rsl.dimensions) ? r.rsl.dimensions : null
+  if (dims && dims.length) {
+    return dims
+    .map((d) => (d && (d.dimension_label || d.dimension || d.label) ? String(d.dimension_label || d.dimension || d.label) : ''))
+    .filter((s) => !!s)
+    .slice(0, 8)
+  }
+
+return []
+}
+
+function renderSummaryPanels(r) {
+  const tags = $('topicTags')
+  if (tags) {
+    tags.innerHTML = ''
+    ;(getTopicTagsFromReport(r) || []).forEach((t) => {
+      const s = document.createElement('span')
+      s.className = 'kpi'
+      s.textContent = t
+      tags.appendChild(s)
+    })
+}
+}
+
+function renderAuthorshipPanels(r) {
+  setText(
+  'aiInterpretation',
+  String(
+  r?.rc?.summary ??
+  r?.reasoning_control?.summary ??
+  'Human-led reasoning with stable structural traces. Current point is near the human cluster center.. Reasoning decisions originate from human-driven structural revision rather than automated continuation flow.'
+),
+)
+setText('aiPatternLabel', String(r?.rc?.control_pattern ?? getReasoningControlPattern(r) ?? 'deep_reflective_human'))
+setText('aiReliability', String(r?.rc?.reliability_band ?? getReasoningReliabilityBand(r) ?? 'HIGH'))
+
+setText('mixBandRationale', String(r?.rc?.band_rationale ?? r?.reasoning_control?.band_rationale_en ?? r?.agency?.control_pattern_meta?.band_rationale_en ?? ''))
+
+setText('mixPatternInterpretation', getAgencyPatternInterpretation(r) || '')
+
+setText('rcDeterminationSentence', String(r?.rc?.determination_sentence ?? ''))
+
+function capAgencyLabel(k){
+  if(!k) return '';
+  const m = { human:'Human', hybrid:'Hybrid', ai:'AI' };
+  return m[String(k).toLowerCase()] || k;
+}
+
+const mix = getMixFromReport(r)
+const mixKpis = $('mixKpis')
+if (mixKpis) {
+  mixKpis.innerHTML = ''
+  ;[
+  ['human', mix.human],
+  ['hybrid', mix.hybrid],
+  ['ai', mix.ai],
+].forEach(([k, v]) => {
+  const span = document.createElement('span')
+  span.className = 'kpi'
+  span.innerHTML = '<span class="kpiLabel agencyLabel">' + capAgencyLabel(k) + '</span>: <span class="code">' + formatPct01(v) + '</span>'
+  mixKpis.appendChild(span)
+})
+}
+}
+
+function renderCffPanels(r) {
+  const cff = r.cff || {}
+
+  const fd = (cff.final_determination && typeof cff.final_determination === 'object'
+  ? cff.final_determination
+  : null) || (cff.final_determination_backend && typeof cff.final_determination_backend === 'object'
+  ? cff.final_determination_backend
+  : null) || {}
+
+  const finalLabel =
+  fd.label ||
+  cff.final_determination_label ||
+  cff.finalDeterminationLabel ||
+  ''
+  const finalConfRaw =
+  fd.type_confidence ??
+  fd.typeConfidence ??
+  fd.confidence ??
+  cff.final_determination_type_confidence ??
+  cff.finalDeterminationTypeConfidence ??
+
+  r?.hero?.chips?.confidence_index ??
+  r?.hero?.chips?.confidenceIndex ??
+  null
+  const finalConf = finalConfRaw == null ? '' : fmt2(Number(finalConfRaw))
+
+  setText('cffFinalLabel', finalLabel)
+  setText('cffFinalLabel2', finalLabel)
+  setText('cffFinalConf', finalConf)
+  setText('cffFinalConf2', finalConf)
+
+  let finalMeaning =
+  fd.interpretation ||
+  fd.type_description ||
+  fd.typeDescription ||
+  fd.explanation ||
+  fd.meaning ||
+  cff.final_determination_explanation ||
+  cff.finalDeterminationExplanation ||
+  ''
+  setText('cffFinalMeaning', finalMeaning)
+
+  const op = cff.observed_patterns && typeof cff.observed_patterns === 'object' ? cff.observed_patterns : {}
+
+  const p1 = op.primary_pattern || op.primary || op.primary_label || ''
+  const p2 = op.secondary_pattern || op.secondary || op.secondary_label || ''
+
+  const opConfRaw =
+  op.type_confidence ??
+  op.typeConfidence ??
+  cff.observed_patterns_type_confidence ??
+  cff.observedPatternsTypeConfidence ??
+  null
+  const opConf = opConfRaw == null ? '' : fmt2(Number(opConfRaw))
+
+  setText('cffPrimary', p1)
+  setText('cffPrimary2', p1)
+  setText('cffSecondary', p2)
+  setText('cffSecondary2', p2)
+  setText('cffTypeConfidence', opConf)
+  setText('cffTypeConfidence2', opConf)
+
+  const ftChip =
+  cff?.final_type?.chip_label ||
+  cff?.final_type?.chipLabel ||
+  cff?.final_type?.label ||
+  cff?.finalType?.chip_label ||
+  cff?.finalType?.chipLabel ||
+  cff?.finalType?.label ||
+  ''
+  setText('finalTypeChip', ftChip)
+
+  const ftConfRaw =
+  cff?.final_type?.confidence ??
+  cff?.final_type?.type_confidence ??
+  cff?.finalType?.confidence ??
+  cff?.finalType?.type_confidence ??
+  fd?.type_confidence ??
+  fd?.typeConfidence ??
+  fd?.confidence ??
+  cff.final_determination_type_confidence ??
+  cff.finalDeterminationTypeConfidence ??
+  null
+  const ftConf = ftConfRaw == null ? '' : fmt2(Number(ftConfRaw))
+  setText('finalTypeConfidence', ftConf)
+
+  const pd = cff?.pattern?.primary_description || ''
+  const sd = cff?.pattern?.secondary_description || ''
+
+  let patternMeaning = (pd && sd ? (pd + ' ' + sd) : (pd || sd)) || (op.explanation || op.meaning || '')
+  if (!patternMeaning) {
+    const s1 = op.primary_summary || op.primarySummary || ''
+    const s2 = op.secondary_summary || op.secondarySummary || ''
+    if (s1 && s2) patternMeaning = s1 + ' ' + s2
+    else patternMeaning = s1 || s2 || ''
+  }
+setText('cffPatternMeaning', patternMeaning)
+}
+
+function renderCffTable(r) {
+  const body = $('cffTableBody')
+  if (!body) return
+  body.innerHTML = ''
+
+  const names = {
+    AAS: 'Argument Architecture Style',
+    CTF: 'Cognitive Transition Flow',
+    RMD: 'Reasoning Momentum Delta',
+    RDX: 'Revision Depth Index',
+    EDS: 'Evidence Diversity Score',
+    IFD: 'Intent Friction Delta',
+    'KPF-Sim': 'Keystroke Pattern Fingerprint Similarity',
+    'TPS-H': 'Thought Pattern Similarity (History-based)',
+  }
+
+const order = ['AAS', 'CTF', 'RMD', 'RDX', 'EDS', 'IFD', 'KPF-Sim', 'TPS-H']
+const indRaw = r.cff?.indicators ?? {}
+const indMap = {}
+
+if (Array.isArray(indRaw)) {
+  indRaw.forEach((it) => {
+    const code = String(it?.code ?? '')
+    if (!code) return
+    const v = it?.value_0to1 ?? it?.value ?? it?.score_0to1 ?? it?.score
+    indMap[code] = v == null ? null : Number(v)
+  })
+} else if (indRaw && typeof indRaw === 'object') {
+Object.keys(indRaw).forEach((k) => {
+  const v = indRaw[k]
+  indMap[String(k)] = v == null ? null : Number(v)
+})
+}
+
+const indBackend = r.cff?.indicators_backend
+if (indBackend && typeof indBackend === 'object') {
+  Object.keys(indBackend).forEach((k) => {
+    if (indMap[k] != null) return
+    const v = indBackend[k]
+    indMap[String(k)] = v == null ? null : Number(v)
+  })
+}
+
+function getVal(code) {
+  if (code === 'KPF-Sim') {
+    return (
+    indMap['KPF-Sim'] ?? indMap.KPF_SIM ?? indMap.KPFSim ?? indMap.kpf_sim ?? indMap.kpfSim ?? null
+  )
+}
+if (code === 'TPS-H') {
+  return indMap['TPS-H'] ?? indMap.TPS_H ?? indMap.TPSH ?? indMap.tps_h ?? indMap.tpsH ?? null
+}
+return indMap[code] ?? null
+}
+
+function fmtScore(code, raw) {
+  if (raw == null) return 'N/A'
+  if (typeof raw === 'number') {
+    if (code === 'TPS-H' && raw > 1) return String(Math.round(raw))
+    return fmt2(raw)
+  }
+return String(raw)
+}
+
+order.forEach((code) => {
+  const raw = getVal(code)
+  const isNA = raw == null
+
+  const tr = document.createElement('tr')
+
+  const tdCode = document.createElement('td')
+  tdCode.className = 'code'
+  tdCode.textContent = code
+
+  const tdName = document.createElement('td')
+  tdName.textContent = names[code] || code
+
+  const tdScore = document.createElement('td')
+  tdScore.textContent = fmtScore(code, raw)
+
+  const tdStatus = document.createElement('td')
+  tdStatus.textContent = isNA ? 'Excluded' : 'Active'
+
+  tr.appendChild(tdCode)
+  tr.appendChild(tdScore)
+  tr.appendChild(tdName)
+  tr.appendChild(tdStatus)
+  body.appendChild(tr)
+})
+}
+
+function renderArcPanels(r) {
+
+  function req(path, v) {
+    if (v === null || v === undefined) throw new Error('[NeuPrint] Missing required field: ' + path);
+    if (typeof v === 'string' && v.trim() === '') throw new Error('[NeuPrint] Missing required field: ' + path);
+    return v;
+  }
+
+const rslLevel = req('rsl.level.short_name', r.rsl?.level?.short_name);
+const rslLevelNote = req('rsl.level.definition', r.rsl?.level?.definition);
+
+const friScore = Number(req('rsl.fri.score', r.rsl?.fri?.score));
+const friNote = req('rsl.fri.interpretation', r.rsl?.fri?.interpretation);
+
+const cohortLabel = req('rsl.cohort.top_percent_label', r.rsl?.cohort?.top_percent_label);
+const cohortNote = req('rsl.cohort.interpretation', r.rsl?.cohort?.interpretation);
+
+const sriScore = Number(req('rsl.sri.score', r.rsl?.sri?.score));
+const sriNote = req('rsl.sri.interpretation', r.rsl?.sri?.interpretation);
+
+setText('mRslLevel', String(rslLevel));
+setText('mRslLevelNote', String(rslLevelNote).trim());
+setText('mRslMean', fmt2(friScore));
+setText('mRslMeanNote', String(friNote).trim());
+setText('mRslCohort', String(cohortLabel));
+setText('mRslCohortNote', String(cohortNote).trim());
+setText('mStructuralReliability', fmt2(sriScore));
+setText('mStructuralReliabilityNote', String(sriNote).trim());
+}
+
+function renderArcTable(r) {
+  const body = $('rslResultsByDimension') || $('arcTableBody')
+  if (!body) return
+  body.innerHTML = ''
+
+  const rows = Array.isArray(r.rsl?.dimensions) ? r.rsl.dimensions : []
+  rows.forEach((d) => {
+    const tr = document.createElement('tr')
+    const code = d.code ?? ''
+    const name = d.label ?? d.name ?? ''
+    const scoreVal = d.score_1to5 ?? d.score
+    const score = scoreVal == null ? '' : String(scoreVal)
+    const obs = d.observation ?? d.comment ?? ''
+
+    tr.innerHTML =
+    '<td><span class="code">' +
+    esc(code) +
+    '</span> ' +
+    esc(name) +
+    '</td>' +
+    '<td>' +
+    esc(score) +
+    '</td>' +
+    '<td>' +
+    esc(obs) +
+    '</td>'
+
+    body.appendChild(tr)
+  })
+
+__np_setArcTableLayout()
+}
+
+function renderMapPanels(r) {
+  const rm = r.reasoning_map || {}
+  const mapKpis = $('mapKpis')
+  if (mapKpis) {
+    mapKpis.innerHTML = ''
+
+    const sd = document.createElement('span')
+    sd.className = 'kpi'
+    sd.innerHTML =
+    'distance_to_human_center: <span class="code">' +
+    Number(rm.distance_to_human_center_sd ?? 0).toFixed(2) +
+    ' SD</span>'
+
+    const pt = document.createElement('span')
+    pt.className = 'kpi'
+    const cx = Number(rm.current?.x ?? 0).toFixed(2)
+    const cy = Number(rm.current?.y ?? 0).toFixed(2)
+    pt.innerHTML = 'current_point: <span class="code">(' + cx + ', ' + cy + ')</span>'
+
+    mapKpis.appendChild(sd)
+    mapKpis.appendChild(pt)
+  }
+}
+
+function renderStabilityPanels(r) {
+  setText(
+  r.stability?.history_status === 'None'
+  ? 'None'
+  : fmt2(r.stability?.type_consistency ?? 0),
+)
+}
+
+function renderIdentityPanels(r) {}
+
+function renderRoleFit(r) {
+  const rf = r.role_fit || {}
+
+  const styleSummary =
+  rf.cognitive_style_summary ||
+  r.cff?.cognitive_style_summary ||
+  r.cff?.cognitive_style?.summary ||
+  ''
+  const rolesLine = String(rf.recommended_roles_line || '').trim()
+  const baseLine = String(styleSummary || '').trim()
+  const combined = rolesLine
+  ? baseLine
+  ? baseLine.replace(/\s+$/, '') + (/[\.!?]$/.test(baseLine) ? ' ' : '. ') + rolesLine
+  : rolesLine
+  : baseLine
+  setText('hrProfile1', combined)
+  setText('hrRecommendedRolesLine', '')
+
+  const hrKpis = $('hrKpis')
+  if (hrKpis) {
+    hrKpis.innerHTML = ''
+    const ts = rf.track_scores
+
+    const pushKpi = (track, pctVal) => {
+      const span = document.createElement('span')
+      span.className = 'kpi'
+      const pct =
+      typeof pctVal === 'number'
+      ? (Number.isFinite(pctVal) ? Math.round(pctVal) + '%' : '-')
+      : (pctVal || '-')
+      span.innerHTML =
+      '<span class="kpiLabel">' +
+      esc(String(track || '')) +
+      '</span>: <span class="code">' +
+      esc(String(pct)) +
+      '</span>'
+      hrKpis.appendChild(span)
+    }
+
+  if (Array.isArray(ts)) {
+    ts.forEach((t) => {
+      if (!t) return
+      pushKpi(t.track || t.name || '', t.pct)
+    })
+} else if (ts && typeof ts === 'object') {
+
+const entries = Object.entries(ts)
+.map(([k, v]) => [k, Number(v)])
+.filter(([, v]) => Number.isFinite(v))
+.sort((a, b) => b[1] - a[1])
+entries.forEach(([k, v]) => pushKpi(k, v))
+}
+}
+
+setText('hrProfile2', rf.profile_statement || rf.profileStatement || '')
+
+const el3 = $('hrProfile3')
+if (el3) {
+  const raw = rf.job_role_fit
+  let groups = []
+
+  if (Array.isArray(raw)) {
+    groups = raw
+    .filter(Boolean)
+    .map((grp) => ({
+      label: grp.track || grp.group || grp.name || '',
+      roles: Array.isArray(grp.roles) ? grp.roles : (grp.roles ? [grp.roles] : []),
+    }))
+} else if (raw && typeof raw === 'object') {
+groups = Object.entries(raw).map(([k, v]) => ({
+  label: k,
+  roles: Array.isArray(v) ? v : (v ? [v] : []),
+}))
+}
+
+const blocks = groups
+.map((g) => {
+  const label = g.label || ''
+  const roles = (Array.isArray(g.roles) ? g.roles : []).filter(Boolean).join(', ')
+  return '<span class="kpiLabel">' + esc(label) + '</span> : ' + esc(roles)
+})
+.join('<br><br>')
+
+el3.innerHTML = blocks
+}
+
+setText('rfClosing', rf.inference_flow?.closing || rf.inferenceFlow?.closing || '')
+}
+
+function renderAgencySignals(r) {
+  const ul = document.getElementById('agencySignalsList')
+  const noteEl = document.getElementById('agencySignalsNote')
+  if (!ul) return
+  ul.innerHTML = ''
+
+  // Prefer rc.observed_structural_signals, fallback to agency.observed_structural_signals
+  const raw = (r && r.rc && r.rc.observed_structural_signals != null)
+    ? r.rc.observed_structural_signals
+    : (r && r.agency ? r.agency.observed_structural_signals : null)
+
+  // Normalize to an array of strings:
+  // - array: ["...", "..."]
+  // - object with bullets: { bullets: [...] }
+  // - object with numeric keys: { "1": "...", "2": "..." }
+  let items = []
+  if (Array.isArray(raw)) {
+    items = raw
+  } else if (raw && typeof raw === 'object') {
+    if (Array.isArray(raw.bullets)) {
+      items = raw.bullets
+    } else {
+      const keys = Object.keys(raw).filter((k) => /^\d+$/.test(k)).sort((a, b) => Number(a) - Number(b))
+      if (keys.length) items = keys.map((k) => raw[k])
+    }
+  }
+
+  // Note: prefer explicit note field, otherwise use agency section lead/summary when present
+  if (noteEl) {
+    const explicitNote = raw && !Array.isArray(raw) && typeof raw.note === 'string' ? raw.note.trim() : ''
+    if (explicitNote) {
+      noteEl.textContent = explicitNote
+    } else {
+      const lead = r?.agency?.section_lead ? String(r.agency.section_lead).trim() : ''
+      const sum = r?.agency?.summary ? String(r.agency.summary).trim() : ''
+      const nextNote = (lead || sum || '').trim()
+      noteEl.textContent = nextNote
+    }
+  }
+
+  // Render list (no hardcoded fallback)
+  items
+    .map((s) => String(s ?? '').trim())
+    .filter((s) => s.length)
+    .forEach((s) => {
+      const li = document.createElement('li')
+      li.textContent = s
+      ul.appendChild(li)
+    })
+}
+
+function renderMetadata(r) {
+  const raw = $('rawJson')
+  if (raw) raw.textContent = JSON.stringify(r, null, 2)
+}
+
+const SIGNATURE_KEYS = ['AAS', 'CTF', 'RMD', 'RDX', 'EDS', 'IFD']
+const SIGNATURE_OPTS = {
+  resampleStepPx: 2.5,
+  preChaikin: true,
+  padPx: 14,
+  overscan: 0.96,
+  strokeRGBA: 'rgba(12,12,12,0.86)',
+  strokeWidth: 1.2,
+  animMs: parseInt(css.getPropertyValue('--sigAnimMs'), 10) || 1900,
+  colorCycle: false,
+  colorCycleMs: 2600,
+}
+
+function hashStr(s) {
+  let h = 2166136261
+  for (let i = 0; i < s.length; i++) {
+    h ^= s.charCodeAt(i)
+    h = Math.imul(h, 16777619)
+  }
+return h >>> 0
+}
+
+function mulberry32(a) {
+  return function () {
+    let t = (a += 0x6d2b79f5)
+    t = Math.imul(t ^ (t >>> 15), t | 1)
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61)
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296
+  }
+}
+
+function setupHiDPICanvas(canvas) {
+  const dpr = window.devicePixelRatio || 1
+  const rect = canvas.getBoundingClientRect()
+  const w = Math.max(1, Math.floor(rect.width))
+  const h = Math.max(1, Math.floor(rect.height))
+  canvas.width = Math.floor(w * dpr)
+  canvas.height = Math.floor(h * dpr)
+  const ctx = canvas.getContext('2d')
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+  return { ctx, width: w, height: h }
+}
+
+function bboxOfPoints(pts) {
+  let minX = Infinity,
+  minY = Infinity,
+  maxX = -Infinity,
+  maxY = -Infinity
+  for (const p of pts) {
+    if (p.x < minX) minX = p.x
+    if (p.y < minY) minY = p.y
+    if (p.x > maxX) maxX = p.x
+    if (p.y > maxY) maxY = p.y
+  }
+if (!isFinite(minX)) return { minX: 0, minY: 0, maxX: 1, maxY: 1, w: 1, h: 1 }
+const w = Math.max(1, maxX - minX)
+const h = Math.max(1, maxY - minY)
+return { minX, minY, maxX, maxY, w, h }
+}
+
+function fitRectToCanvas(bbox, canvasW, canvasH, pad, overscan) {
+  const innerW = Math.max(1, canvasW - pad * 2)
+  const innerH = Math.max(1, canvasH - pad * 2)
+  let scale = Math.min(innerW / bbox.w, innerH / bbox.h)
+  scale *= Math.max(1, Number.isFinite(overscan) ? overscan : 1)
+  const tx = pad + (innerW - bbox.w * scale) / 2 - bbox.minX * scale
+  const ty = pad + (innerH - bbox.h * scale) / 2 - bbox.minY * scale
+  return { scale, tx, ty }
+}
+
+function lerp(a, b, t) {
+  return a + (b - a) * t
+}
+
+function generateSignatureVectorFromReport(r) {
+
+  const ind = {}
+  const radar = r?.cff?.radar
+  if (radar && Array.isArray(radar.labels) && Array.isArray(radar.values_0to1)) {
+    radar.labels.forEach((l, i) => {
+      ind[String(l)] = Number(radar.values_0to1[i] ?? 0)
+    })
+}
+
+const indRaw = r?.cff?.indicators ?? {}
+if (Array.isArray(indRaw)) {
+  indRaw.forEach((it) => {
+    const code = String(it?.code ?? '')
+    if (!code) return
+    const v = it?.value_0to1 ?? it?.value ?? it?.score_0to1 ?? it?.score
+    if (ind[code] == null) ind[code] = v == null ? 0 : Number(v)
+  })
+} else if (indRaw && typeof indRaw === 'object') {
+Object.keys(indRaw).forEach((k) => {
+  if (ind[k] != null) return
+  const v = indRaw[k]
+  ind[String(k)] = v == null ? 0 : Number(v)
+})
+}
+
+const v = {}
+for (const k of SIGNATURE_KEYS) {
+  v[k] = clamp01(Number(ind[k] ?? 0))
+}
+const seedStr = JSON.stringify(v, SIGNATURE_KEYS)
+const rng = mulberry32(hashStr(seedStr))
+return { v, rng }
+}
+
+function generateRawPolyline(v, rng) {
+  const W = 1080,
+  H = 1080
+  const margin = 110
+  const cx = W / 2,
+  cy = H / 2
+
+  const pseudoHI = clamp01(v.CTF * 0.45 + v.RMD * 0.35 + v.RDX * 0.2)
+
+  const bandW = lerp(560, 880, 1 - v.IFD)
+  const bandH = lerp(170, 380, v.IFD)
+  const bandX1 = cx - bandW / 2,
+  bandX2 = cx + bandW / 2
+  const bandY1 = cy - bandH / 2,
+  bandY2 = cy + bandH / 2
+
+  const steps = Math.floor(lerp(2400, 9000, v.RDX))
+  const baseStep = lerp(0.95, 2.75, v.CTF)
+  const turnGain = lerp(0.006, 0.08, v.AAS)
+  const loopP = lerp(0.01, 0.12, v.RMD)
+  const cohesion = lerp(0.12, 0.74, pseudoHI)
+  const switchP = lerp(0.001, 0.011, v.EDS)
+  const jitter = lerp(0.05, 1.3, pseudoHI)
+
+  function softClamp(nx, ny) {
+    if (nx < bandX1) nx = lerp(nx, bandX1, 0.55)
+    if (nx > bandX2) nx = lerp(nx, bandX2, 0.55)
+    if (ny < bandY1) ny = lerp(ny, bandY1, 0.55)
+    if (ny > bandY2) ny = lerp(ny, bandY2, 0.55)
+    nx = Math.max(margin, Math.min(W - margin, nx))
+    ny = Math.max(margin, Math.min(H - margin, ny))
+    return [nx, ny]
+  }
+
+const baselineAngle = lerp(-0.2, 0.12, rng())
+const baselineLen = bandW * 0.84
+const bx1 = cx - (Math.cos(baselineAngle) * baselineLen) / 2
+const by1 = cy - (Math.sin(baselineAngle) * baselineLen) / 2
+const bx2 = cx + (Math.cos(baselineAngle) * baselineLen) / 2
+const by2 = cy + (Math.sin(baselineAngle) * baselineLen) / 2
+
+const coresN = 3 + Math.floor(rng() * 3)
+const cores = []
+for (let i = 0; i < coresN; i++) {
+  const t = coresN === 1 ? 0 : i / (coresN - 1)
+  const px = bx1 + (bx2 - bx1) * t
+  const py = by1 + (by2 - by1) * t
+  const n = Math.hypot(bx2 - bx1, by2 - by1) || 1
+  const nx = -(by2 - by1) / n
+  const ny = (bx2 - bx1) / n
+  const off = (rng() - 0.5) * bandH * 0.62
+  cores.push({
+    x: px + nx * off,
+    y: py + ny * off,
+    pull: lerp(0.05, 0.4, rng()) * cohesion,
+  })
+}
+
+let x = lerp(bandX1, bandX1 + bandW * 0.12, rng())
+let y = lerp(bandY1, bandY2, rng())
+let ang = lerp(-0.16, 0.16, rng())
+let mode = 0
+
+const history = []
+const historyCap = 80 + Math.floor(v.RMD * 260)
+const pts = [{ x, y }]
+
+for (let i = 0; i < steps; i++) {
+  if (rng() < switchP) mode = (mode + 1 + Math.floor(rng() * 2)) % 3
+
+  let target = cores[Math.floor(rng() * cores.length)]
+  if (history.length > 18 && rng() < loopP) {
+    const h = history[Math.floor(rng() * history.length)]
+    target = { x: h.x, y: h.y, pull: lerp(0.06, 0.48, rng()) * cohesion }
+  }
+
+const dx = target.x - x,
+dy = target.y - y
+const dist = Math.hypot(dx, dy) || 1
+const tx = (dx / dist) * target.pull
+const ty = (dy / dist) * target.pull
+
+const pullAngle = Math.atan2(ty, tx)
+const delta = Math.atan2(Math.sin(pullAngle - ang), Math.cos(pullAngle - ang))
+
+const drift = (rng() - 0.5) * (0.02 + 0.028 * v.CTF)
+const modeGain = mode === 0 ? 0.85 : mode === 1 ? 1.25 : 1.05
+
+const flick =
+mode === 1 && rng() < 0.018 ? (rng() < 0.5 ? -1 : 1) * (0.28 + rng() * 0.75) : 0
+
+ang += drift + delta * turnGain * modeGain + flick
+
+const breathe = 0.8 + 0.45 * Math.sin(i * 0.01 + rng() * 0.6)
+let stepLen = baseStep * breathe * (0.9 + rng() * 0.28)
+
+if (mode === 2) {
+  stepLen *= 0.92
+  ang += (rng() - 0.5) * 0.1
+}
+
+let nx2 = x + Math.cos(ang) * stepLen + (rng() - 0.5) * 2 * jitter
+let ny2 = y + Math.sin(ang) * stepLen + (rng() - 0.5) * 2 * jitter
+;[nx2, ny2] = softClamp(nx2, ny2)
+x = nx2
+y = ny2
+pts.push({ x, y })
+
+if (i % 48 === 0) {
+  history.push({ x, y })
+  if (history.length > historyCap) history.shift()
+}
+}
+
+return pts
+}
+
+function resamplePolyline(pts, step) {
+  if (pts.length < 2) return pts.slice()
+  const out = [pts[0]]
+  let acc = 0
+  for (let i = 1; i < pts.length; i++) {
+    let p0 = pts[i - 1]
+    let p1 = pts[i]
+    let dx = p1.x - p0.x,
+    dy = p1.y - p0.y
+    let seg = Math.hypot(dx, dy)
+    if (seg === 0) continue
+
+    while (acc + seg >= step) {
+      const t = (step - acc) / seg
+      const nx = p0.x + dx * t
+      const ny = p0.y + dy * t
+      out.push({ x: nx, y: ny })
+      p0 = { x: nx, y: ny }
+      dx = p1.x - p0.x
+      dy = p1.y - p0.y
+      seg = Math.hypot(dx, dy) || 1
+      acc = 0
+    }
+  acc += seg
+}
+out.push(pts[pts.length - 1])
+return out
+}
+
+function chaikinOnce(pts) {
+  if (pts.length < 3) return pts.slice()
+  const fixed = []
+  fixed.push(pts[0])
+  for (let i = 0; i < pts.length - 1; i++) {
+    const p = pts[i],
+    q = pts[i + 1]
+    fixed.push(
+    { x: 0.75 * p.x + 0.25 * q.x, y: 0.75 * p.y + 0.25 * q.y },
+    { x: 0.25 * p.x + 0.75 * q.x, y: 0.25 * p.y + 0.75 * q.y },
+  )
+}
+fixed.push(pts[pts.length - 1])
+return fixed
+}
+
+let sigAnimRAF = null
+let sigHasAnimatedOnce = false
+function drawSignatureFingerprintStatic(r) {
+  const canvas = $('signatureCanvas')
+  if (!canvas) return
+  const rect = canvas.getBoundingClientRect()
+  if (rect.width < 4 || rect.height < 4) return
+  const out = setupHiDPICanvas(canvas)
+  const ctx = out.ctx
+  const width = out.width
+  const height = out.height
+  ctx.clearRect(0, 0, width, height)
+  ctx.save()
+
+  renderSignaturePath(ctx, width, height, r, 1)
+  ctx.restore()
+}
+
+function drawSignatureFingerprintAnimated(r) {
+  if (sigHasAnimatedOnce) return
+  sigHasAnimatedOnce = true
+  const canvas = $('signatureCanvas')
+  if (!canvas) return
+
+  const rect = canvas.getBoundingClientRect()
+  if (rect.width < 4 || rect.height < 4) return
+
+  const out = setupHiDPICanvas(canvas)
+  const ctx = out.ctx
+  const width = out.width
+  const height = out.height
+
+  ctx.clearRect(0, 0, width, height)
+  ctx.fillStyle = '#ffffff'
+  ctx.fillRect(0, 0, width, height)
+
+  const gen = generateSignatureVectorFromReport(r)
+  const v = gen.v
+  const rng = gen.rng
+  const raw = generateRawPolyline(v, rng)
+
+  let pts = resamplePolyline(raw, Number(SIGNATURE_OPTS.resampleStepPx))
+  if (SIGNATURE_OPTS.preChaikin) pts = chaikinOnce(pts)
+
+  const bb = bboxOfPoints(pts)
+  const padRatio = 0.028
+  const basePad = Number(SIGNATURE_OPTS.padPx)
+  const PAD = Math.max(basePad, Math.floor(Math.min(width, height) * padRatio))
+  const fit = fitRectToCanvas(bb, width, height, PAD, Number(SIGNATURE_OPTS.overscan))
+
+  const mapped = pts.map((p) => ({
+    x: Math.max(1, Math.min(width - 1, p.x * fit.scale + fit.tx)),
+    y: Math.max(1, Math.min(height - 1, p.y * fit.scale + fit.ty)),
+  }))
+ctx.lineWidth = Number(SIGNATURE_OPTS.strokeWidth)
+ctx.lineCap = 'round'
+ctx.lineJoin = 'round'
+
+const start = performance.now()
+const dur = Math.max(240, Number(SIGNATURE_OPTS.animMs) || 1200)
+
+if (sigAnimRAF) cancelAnimationFrame(sigAnimRAF)
+
+function frame(now) {
+  const t = Math.min(1, (now - start) / dur)
+  const count = Math.max(2, Math.floor(mapped.length * t))
+
+  ctx.clearRect(0, 0, width, height)
+  ctx.fillStyle = '#ffffff'
+  ctx.fillRect(0, 0, width, height)
+
+  ctx.globalAlpha = 1
+  const ORANGE =
+  getComputedStyle(document.documentElement).getPropertyValue('--accentE').trim() ||
+  getComputedStyle(document.documentElement).getPropertyValue('--accentD').trim() ||
+  '#f97b17'
+  const YELLOW = '#ffd34a'
+
+  const FUSE_BASE = '#3b2f2a'   // unburnt fuse rope
+  const FUSE_BURNT = '#1f1b17'  // charred trail
+  const GLOW_A = '#ffb33b'      // ember core
+  const GLOW_B = '#ff6a1a'      // ember edge
+
+  const lookAhead = Math.max(10, Math.floor(mapped.length * 0.03))
+  const startAhead = Math.max(0, count - 1)
+  const endAhead = Math.min(mapped.length, count + lookAhead)
+
+  const baseW = Number(SIGNATURE_OPTS.strokeWidth) || 1.2
+
+  ctx.lineWidth = Math.max(0.9, baseW * 1.05)
+  ctx.lineCap = "round"
+  ctx.lineJoin = "round"
+  ctx.globalAlpha = 0.88
+  ctx.strokeStyle = FUSE_BASE
+  ctx.beginPath()
+  ctx.moveTo(mapped[startAhead].x, mapped[startAhead].y)
+  for (let i = startAhead + 1; i < endAhead; i++) ctx.lineTo(mapped[i].x, mapped[i].y)
+  ctx.stroke()
+
+  ctx.globalAlpha = 1
+  ctx.strokeStyle = FUSE_BURNT
+  ctx.lineWidth = Math.max(0.8, baseW * 0.92)
+  ctx.beginPath()
+  ctx.moveTo(mapped[0].x, mapped[0].y)
+  for (let i = 1; i < count; i++) ctx.lineTo(mapped[i].x, mapped[i].y)
+  ctx.stroke()
+
+  const tip = mapped[Math.max(0, count - 1)]
+  const tipX = tip.x
+  const tipY = tip.y
+
+  if (t < 1) {
+
+    const emberR = 4.0
+    ctx.save()
+    ctx.globalCompositeOperation = 'lighter'
+    const grd = ctx.createRadialGradient(tipX, tipY, 0, tipX, tipY, emberR * 6)
+    grd.addColorStop(0, GLOW_A)
+    grd.addColorStop(0.35, GLOW_B)
+    grd.addColorStop(1, 'rgba(255,106,26,0)')
+    ctx.fillStyle = grd
+    ctx.beginPath()
+    ctx.arc(tipX, tipY, emberR * 6, 0, Math.PI * 2)
+    ctx.fill()
+    ctx.restore()
+  }
+
+if (!frame.__sparks) {
+  frame.__sparks = []
+  frame.__sparkTick = 0
+
+  frame.__sparkRng = mulberry32(hashStr('spark:' + JSON.stringify(v, SIGNATURE_KEYS)))
+}
+
+const sparks = frame.__sparks
+if (t >= 1) sparks.length = 0
+const rand = frame.__sparkRng
+
+if (t < 1) {
+  frame.__sparkTick++
+  const burstN = 2 + Math.floor(rand() * 5) // 2..6 (2x density)
+  for (let k = 0; k < burstN; k++) {
+    const ang = rand() * Math.PI * 2
+    const spd = 2.2 + rand() * 3.2
+    const vx = Math.cos(ang) * spd
+    const vy = Math.sin(ang) * spd
+
+    const life = 220 + rand() * 180 // 220..400ms (shorter, calmer)
+
+    const baseLen = 7
+    let len = baseLen * (0.70 + rand() * 1.60) // base streak length
+
+    const isLong = rand() < 0.50
+    if (isLong) len *= 1.05 + rand() * 0.25
+
+    const wShort = 0.70 + rand() * 0.55 // ~0.70..1.25
+    const wLong = 0.30 + rand() * 0.30  // ~0.30..0.60
+    const wJit = 0.90 + rand() * 0.22   // +/- ~11%
+    const w = (isLong ? wLong : wShort) * wJit
+
+    const lenJ = 0.85 + rand() * 0.30
+
+    len = Math.min(len, 12.5)
+
+    const pick = rand()
+    const palette = [
+    '#3b82f6', // blue
+    '#60a5fa', // light blue
+    '#22d3ee', // cyan
+    '#ffd34a', // yellow
+    '#ff7a1a', // orange
+    '#ff2a2a', // red
+    '#b90d11', // deep red
+    '#c026d3', // purple
+    '#ff4fd8', // magenta
+  ]
+
+  const col = palette[Math.floor(rand() * palette.length)]
+  const col2 = palette[Math.floor(rand() * palette.length)]
+
+  const jx = (rand() - 0.5) * 0.8
+  const jy = (rand() - 0.5) * 0.8
+
+  sparks.push({
+    x: tipX + jx,
+    y: tipY + jy,
+    px: tipX + jx,
+    py: tipY + jy,
+    vx,
+    vy,
+    born: now,
+    life,
+    w,
+    len,
+    lenJ,
+    col,
+    col2,
+  })
+}
+}
+
+if (t < 1) {
+  ctx.save()
+  ctx.globalCompositeOperation = 'lighter'
+  ctx.globalAlpha = 0.92
+
+  const fp = rand()
+  const fcol = fp < 0.20 ? '#ffd34a' : fp < 0.40 ? '#ff7a1a' : fp < 0.60 ? '#ff2a2a' : fp < 0.80 ? '#3b82f6' : '#22d3ee'
+  ctx.strokeStyle = fcol
+  ctx.lineCap = 'round'
+  ctx.lineWidth = 1.25
+
+  const rr = 7
+  ctx.beginPath()
+  ctx.moveTo(tipX - rr, tipY)
+  ctx.lineTo(tipX + rr, tipY)
+  ctx.moveTo(tipX, tipY - rr)
+  ctx.lineTo(tipX, tipY + rr)
+  ctx.stroke()
+  ctx.restore()
+}
+
+ctx.save()
+ctx.lineCap = 'round'
+ctx.lineJoin = 'round'
+
+for (let i = sparks.length - 1; i >= 0; i--) {
+  const p = sparks[i]
+  const age = now - p.born
+  if (age >= p.life) {
+    sparks.splice(i, 1)
+    continue
+  }
+
+const u = age / p.life
+
+p.px = p.x
+p.py = p.y
+
+const drag = 0.90
+p.vx *= drag
+p.vy = p.vy * drag + 0.004
+p.x += p.vx
+p.y += p.vy
+
+const flash = age < 42
+
+ctx.globalCompositeOperation = flash ? 'lighter' : 'source-over'
+
+const a = flash ? 0.88 : Math.max(0, Math.pow(1 - u, 0.85) * 0.46)
+if (a <= 0.01) continue
+ctx.globalAlpha = a              // draw TRAVEL streak (spark whooshes from tip outward)
+
+const dxm = p.x - p.px
+const dym = p.y - p.py
+const mmag = (dxm * dxm + dym * dym) ** 0.5 || 1
+
+let dirx = dxm
+let diry = dym
+if (mmag < 0.35) {
+  dirx = p.vx
+  diry = p.vy
+}
+const dmag = Math.hypot(dirx, diry) || 1
+const ux = dirx / dmag
+const uy = diry / dmag
+
+const tailLen = p.len * (p.lenJ || 1)
+const x1t = p.x - ux * tailLen
+const y1t = p.y - uy * tailLen
+
+const g = ctx.createLinearGradient(x1t, y1t, p.x, p.y)
+g.addColorStop(0, 'rgba(0,0,0,0)')
+g.addColorStop(0.15, p.col2)
+g.addColorStop(0.65, p.col)
+g.addColorStop(1, p.col)
+ctx.strokeStyle = g
+ctx.lineWidth = flash ? p.w * 1.00 : p.w * 0.88
+ctx.beginPath()
+ctx.moveTo(x1t, y1t)
+ctx.lineTo(p.x, p.y)
+ctx.stroke()
+
+if (flash) {
+  ctx.fillStyle = p.col
+  ctx.globalAlpha = Math.min(1, a + 0.10)
+  ctx.beginPath()
+  ctx.arc(p.x, p.y, 1.15 + p.w * 0.45, 0, Math.PI * 2)
+  ctx.fill()
+}
+}
+ctx.restore()
+
+if (t < 1) {
+  sigAnimRAF = requestAnimationFrame(frame)
+}
+}
+sigAnimRAF = requestAnimationFrame(frame)
+}
+
+const chartsById = Object.create(null)
+const chartAnimators = Object.create(null)
+const chartAnimatedOnce = Object.create(null)
+
+const chartIO =
+'IntersectionObserver' in window
+? new IntersectionObserver(onChartEnter, {
+  root: null,
+  threshold: 0.18,
+  rootMargin: '120px 0px',
+})
+: null
+
+function safeChart(id, config) {
+  const el = $(id)
+  if (!el || !window.Chart) return null
+  if (chartsById[id]) {
+    try {
+      chartsById[id].destroy()
+    } catch (_e) {}
+  delete chartsById[id]
+}
+const c = new Chart(el, config)
+chartsById[id] = c
+return c
+}
+
+function baseChartOptions(animate) {
+  return {
+    responsive: true,
+    maintainAspectRatio: false,
+    animation: animate ? { duration: CHART_ANIM_MS } : { duration: 0 },
+    interaction: { mode: 'nearest', intersect: false },
+    plugins: {
+      legend: {
+        display: true,
+        position: 'top',
+        labels: { usePointStyle: true, pointStyle: 'circle', boxWidth: 8, boxHeight: 8 },
+      },
+    tooltip: { enabled: true },
+  },
+}
+}
+
+function doughnutOptions(animate) {
+  const base = baseChartOptions(animate)
+  return {
+    ...base,
+    rotation: -90,
+    circumference: 360,
+    animation: animate
+    ? { duration: CHART_ANIM_MS, delay: 0, animateRotate: true, animateScale: false }
+    : { duration: 0 },
+    plugins: { ...base.plugins, legend: { ...base.plugins.legend, position: 'bottom' } },
+  }
+}
+
+const BAR_FIXED_VERTICAL = {
+  barThickness: 14,
+  maxBarThickness: 14,
+  categoryPercentage: 0.8,
+  barPercentage: 0.9,
+  borderWidth: 0,
+  borderRadius: { topLeft: 4, topRight: 4, bottomLeft: 0, bottomRight: 0 },
+  borderSkipped: false,
+}
+
+const BAR_FIXED_HORIZONTAL = {
+  barThickness: 14,
+  maxBarThickness: 14,
+  categoryPercentage: 0.8,
+  barPercentage: 0.9,
+  borderWidth: 0,
+  borderRadius: { topLeft: 0, bottomLeft: 0, topRight: 4, bottomRight: 4 },
+  borderSkipped: false,
+}
+
+const DONUT_FIXED = {
+  cutout: '62%',
+  radius: '92%',
+  borderWidth: 0,
+  hoverOffset: 0,
+}
+
+function mountChartDeferred(id, makeBaseConfig, animateNow) {
+  const el = $(id)
+  if (!el) return
+
+  safeChart(id, makeBaseConfig(false))
+
+  if (chartIO) {
+    chartAnimators[id] = animateNow
+    chartIO.observe(el)
+  } else {
+  setTimeout(
+  () => animateNow(),
+  (IS_MOBILE ? MOBILE_CHART_START_DELAY : 0) + CHART_DELAY_MS,
+)
+}
+}
+
+function onChartEnter(entries) {
+  entries.forEach((ent) => {
+    if (!ent.isIntersecting) return
+    const canvas = ent.target
+    const id = canvas && canvas.id
+    if (!id) return
+    if (chartAnimatedOnce[id]) return
+
+    chartAnimatedOnce[id] = true
+    chartIO.unobserve(canvas)
+
+    const fn = chartAnimators[id]
+    if (typeof fn === 'function') {
+      setTimeout(() => fn(), (IS_MOBILE ? MOBILE_CHART_START_DELAY : 0) + CHART_DELAY_MS)
+    }
+})
+}
+
+function animateChartData(id, applyRealData) {
+  const c = chartsById[id]
+  if (!c) return
+  applyRealData(c)
+  c.options.animation = { duration: CHART_ANIM_MS, delay: 0 }
+  c.update()
+}
+
+const RADAR_VALUE_IN_POINT_LABEL = false
+
+function registerAllCharts(r) {
+  const mix = getMixFromReport(r)
+  const conf = getConfidenceIndex01(r)
+
+  const relMapped =
+  getReasoningReliabilityBand(r) === 'HIGH'
+  ? 0.9
+  : getReasoningReliabilityBand(r) === 'MEDIUM'
+  ? 0.6
+  : 0.35
+
+  const decision = String(r?.hero?.chips?.control ?? r?.agency?.control_label ?? '')
+
+  const arcDims = Array.isArray(r.rsl?.dimensions) ? r.rsl.dimensions : []
+  const arcPairs = arcDims
+  .map((d) => {
+    const code = String(d?.code ?? '').trim()
+    const v = Number(d?.score_1to5 ?? d?.score ?? d?.value ?? 0)
+    return { code, v: Number.isFinite(v) ? v : 0 }
+  })
+.filter((p) => Boolean(p.code))
+
+const arcLabels = arcPairs.map((p) => p.code)
+const arcVals = arcPairs.map((p) => p.v)
+
+const cffOrder = ['AAS', 'CTF', 'RMD', 'RDX', 'EDS', 'IFD']
+const cffInd = r.cff?.indicators || {}
+
+const DONUT_SPIN_ANIM = {
+  circumference: { duration: CHART_ANIM_MS, from: 0 },
+  rotation: { duration: CHART_ANIM_MS, from: -450 },
+}
+
+mountChartDeferred(
+'chartMixAgency',
+(animate) => ({
+  type: 'doughnut',
+  data: {
+    labels: [],
+    datasets: [
+    {
+      data: [0, 0, 0],
+      ...DONUT_FIXED,
+      backgroundColor: [THEME.accentA, THEME.accentC, THEME.accentD],
+    },
+],
+},
+options: {
+  ...doughnutOptions(animate),
+  plugins: {
+    ...doughnutOptions(animate).plugins,
+
+    centerText: { top: decision, bottom: (pctTripletFromMix(mix)[0] + '%') },
+  },
+},
+}),
+() =>
+animateChartData('chartMixAgency', (c) => {
+  const mix = getMixFromReport(r) || {}
+  const decision = String(r?.hero?.chips?.control ?? r?.agency?.control_label ?? '')
+  const labels =
+    (Array.isArray(r?.agency?.mix_labels) && r.agency.mix_labels.length)
+      ? r.agency.mix_labels.map((s) => String(s))
+      : Object.keys(mix).map((k) => String(k).charAt(0).toUpperCase() + String(k).slice(1))
+
+  c.data.labels = labels
+  c.data.datasets[0].data = pctTripletFromMix(mix)
+
+  c.options.plugins.centerText = { top: decision, bottom: (pctTripletFromMix(mix)[0] + '%') }
+}),
+)
+
+const contribKeys = [
+'structural_variance',
+'human_rhythm_index',
+'transition_flow',
+'revision_depth',
+]
+const contribLabels = [
+'Structural variance',
+'Human rhythm index',
+'Transition flow integrity',
+'Revision depth signal',
+]
+const contribSrc = r?.rc?.structural_control_signals || r?.agency?.structural_control_signals || {
+  structural_variance: 0.42,
+  human_rhythm_index: 0.67,
+  transition_flow: 0.58,
+  revision_depth: 0.31,
+}
+const contribVals = contribKeys.map((k) => clamp01(Number(contribSrc[k] ?? 0)))
+
+mountChartDeferred(
+'chartAuthSignals',
+(animate) => ({
+  type: 'bar',
+  data: {
+    labels: contribLabels,
+    datasets: [
+    {
+      label: 'contribution (0 to 1)',
+      data: contribLabels.map(() => 0),
+      ...BAR_FIXED_HORIZONTAL,
+      backgroundColor: THEME.accentB,
+    },
+],
+},
+options: {
+  ...baseChartOptions(animate),
+  indexAxis: 'y',
+  animation: animate
+  ? {
+    duration: CHART_ANIM_MS,
+    delay: (ctx) => (ctx.type === 'data' ? 140 + ctx.dataIndex * 90 : 0),
+  }
+: { duration: 0 },
+plugins: {
+  ...baseChartOptions(animate).plugins,
+  barValueLabels: { format: 'float2', textColor: THEME.text || '#0f172a' },
+},
+scales: {
+  x: { min: 0, max: 1, grid: { color: 'rgba(148,163,184,.22)' } },
+  y: {
+    grid: { display: false },
+  },
+},
+},
+}),
+() =>
+animateChartData('chartAuthSignals', (c) => {
+  c.data.datasets[0].data = contribVals.slice()
+}),
+)
+
+mountChartDeferred(
+'chartCffRadar',
+(animate) => ({
+  type: 'radar',
+  data: {
+    labels: cffOrder,
+    datasets: [
+    {
+      label: 'CFF Indicator',
+      data: (() => {
+        const v = (() => {
+          const radar = r?.cff?.radar
+          if (radar && Array.isArray(radar.labels) && Array.isArray(radar.values_0to1)) {
+            const m = {}
+            radar.labels.forEach((l, i) => {
+              m[String(l)] = Number(radar.values_0to1[i] ?? 0)
+            })
+          return cffOrder.map((c) => (Number.isFinite(m[c]) ? m[c] : 0))
+        }
+      const indArr = Array.isArray(r?.cff?.indicators) ? r.cff.indicators : null
+      if (indArr) {
+        const m = {}
+        indArr.forEach((it) => {
+          const code = String(it?.code ?? '')
+          if (!code) return
+          m[code] = Number(it?.value_0to1 ?? it?.value ?? 0)
+        })
+      return cffOrder.map((c) => (Number.isFinite(m[c]) ? m[c] : 0))
+    }
+  const indObj = r?.cff?.indicators && !Array.isArray(r.cff.indicators) ? r.cff.indicators : {}
+  return cffOrder.map((c) => Number(indObj?.[c] ?? 0))
+})();
+return animate ? v : v.map(() => 0);
+})(),
+fill: true,
+backgroundColor: _rgba(THEME.accentC, 0.14, '32,203,194'),
+borderColor: THEME.accentC,
+pointBackgroundColor: THEME.accentC,
+borderWidth: 2,
+pointRadius: 3,
+pointHoverRadius: 3,
+pointBorderWidth: 0,
+},
+],
+},
+options: {
+  ...baseChartOptions(animate),
+  plugins: {
+    ...baseChartOptions(animate).plugins,
+    legend: { ...baseChartOptions(animate).plugins.legend, position: 'bottom' },
+    radarValueLabels: false,
+  },
+scales: {
+  r: {
+    min: 0,
+    max: 1,
+    ticks: { display: false, backdropColor: 'transparent' },
+    pointLabels: {
+      padding: 8,
+      font: { size: 10, weight: '500' },
+      color: THEME.text || '#0f172a',
+    },
+  grid: { color: 'rgba(148,163,184,.22)' },
+  angleLines: { color: 'rgba(148,163,184,.22)' },
+},
+},
+},
+}),
+() =>
+animateChartData('chartCffRadar', (c) => {
+
+  const radar = r?.cff?.radar
+  let vals = null
+
+  if (radar && Array.isArray(radar.labels) && Array.isArray(radar.values_0to1)) {
+    const m = {}
+    radar.labels.forEach((l, i) => {
+      m[String(l)] = Number(radar.values_0to1[i] ?? 0)
+    })
+  vals = cffOrder.map((k) => (Number.isFinite(m[k]) ? m[k] : 0))
+}
+
+if (!vals) {
+  const indArr = Array.isArray(r?.cff?.indicators) ? r.cff.indicators : null
+  if (indArr) {
+    const m = {}
+    indArr.forEach((it) => {
+      const code = String(it?.code ?? '')
+      if (!code) return
+      m[code] = Number(it?.value_0to1 ?? it?.value ?? 0)
+    })
+  vals = cffOrder.map((k) => (Number.isFinite(m[k]) ? m[k] : 0))
+} else {
+const indObj = r?.cff?.indicators && !Array.isArray(r.cff.indicators) ? r.cff.indicators : {}
+vals = cffOrder.map((k) => Number(indObj?.[k] ?? 0))
+}
+}
+
+c.data.datasets[0].data = (vals || cffOrder.map(() => 0)).slice()
+c.data.labels = cffOrder.slice()
+if (c.options && c.options.plugins) c.options.plugins.radarValueLabels = false
+}),
+)
+
+// Cohort Positioning: shared default curve (single source of truth)
+const DEFAULT_COHORT_CURVE = [
+  { x: 0.0, y: 2 },
+  { x: 0.5, y: 6 },
+  { x: 1.0, y: 14 },
+  { x: 1.5, y: 26 },
+  { x: 2.0, y: 30 },
+  { x: 2.5, y: 45 },
+  { x: 3.0, y: 58 },
+  { x: 3.5, y: 42 },
+  { x: 4.0, y: 22 },
+  { x: 4.5, y: 10 },
+  { x: 5.0, y: 4 },
+]
+
+mountChartDeferred(
+'chartRslBars',
+(animate) => ({
+  type: 'line',
+  data: {
+    datasets: (() => {
+      let curvePtsRaw =
+      r?.rsl?.charts?.cohort_positioning?.curve_points &&
+      Array.isArray(r.rsl.charts.cohort_positioning.curve_points)
+      ? r.rsl.charts.cohort_positioning.curve_points
+      : DEFAULT_COHORT_CURVE
+
+      let curvePts = (Array.isArray(curvePtsRaw) ? curvePtsRaw : [])
+      .map((pt) => ({
+        x: Number(pt?.x ?? pt?.fri ?? 0),
+        y: Number(pt?.y ?? pt?.pct ?? 0),
+      }))
+    .filter((pt) => Number.isFinite(pt.x) && Number.isFinite(pt.y))
+    .sort((a, b) => a.x - b.x)
+
+    const maxY = curvePts.reduce((m, p) => (p.y > m ? p.y : m), 0)
+    if (maxY > 0 && maxY <= 1.5) {
+      curvePts = curvePts.map((p) => ({ x: p.x, y: p.y * 100 }))
+    }
+
+  const fri = Math.max(0, Math.min(5, Number(r?.rsl?.fri?.score ?? r?.rsl?.fri_score ?? r?.rsl?.fri ?? 0)))
+
+  const yAtX = (x) => {
+    if (!curvePts.length) return 0
+    if (x <= curvePts[0].x) return Number(curvePts[0].y ?? 0)
+    for (let i = 1; i < curvePts.length; i++) {
+      const a = curvePts[i - 1],
+      b = curvePts[i]
+      if (x <= b.x) {
+        const t = (x - a.x) / (b.x - a.x || 1)
+        return a.y + (b.y - a.y) * t
+      }
+  }
+return Number(curvePts[curvePts.length - 1].y ?? 0)
+}
+
+const curPt = { x: fri, y: yAtX(fri) }
+
+const curveTemplate = curvePts
+
+const baseCurve = animate ? curveTemplate : curveTemplate.map((p) => ({ x: p.x, y: 0 }))
+
+return [
+{
+  label: 'Cohort distribution',
+  data: baseCurve,
+  __curveTemplate: curveTemplate,
+  parsing: false,
+  borderColor: THEME.accentD || 'rgba(250,187,5,0.95)',
+  backgroundColor: _rgba(THEME.accentD || '#fabb05', 0.1, '250,187,5'),
+  fill: true,
+  tension: 0.45,
+  borderWidth: 2,
+  pointRadius: 0,
+  pointHoverRadius: 0,
+},
+
+{
+  label: 'Current',
+  data: [curPt],
+  parsing: false,
+  showLine: false,
+  pointRadius: 0,
+  pointHoverRadius: 0,
+  pointBackgroundColor: THEME.accentD || '#fabb05',
+  pointBorderColor: '#fabb05',
+  pointBorderWidth: 0,
+},
+]
+})(),
+},
+options: {
+  responsive: true,
+  maintainAspectRatio: false,
+  devicePixelRatio: Math.min(2, window.devicePixelRatio || 1),
+  animation: animate ? { duration: CHART_ANIM_MS, delay: 0 } : { duration: 0 },
+  layout: { padding: { top: 10, right: 14, bottom: 12, left: 14 } },
+
+  interaction: { mode: 'nearest', intersect: true },
+
+  scales: {
+    x: {
+      type: 'linear',
+      min: 0,
+      max: 5,
+      grid: { color: 'rgba(226,232,240,0.55)' },
+      ticks: {
+        stepSize: 1,
+        color: THEME.text || '#0f172a',
+      },
+  },
+y: {
+  min: 0,
+  max: 100,
+  grid: { color: 'rgba(226,232,240,0.55)' },
+  ticks: {
+    stepSize: 20,
+    callback: (v) => `${v}%`,
+    color: THEME.text || '#0f172a',
+  },
+},
+},
+elements: {
+  line: { borderJoinStyle: 'round' },
+},
+plugins: {
+  ...baseChartOptions(animate).plugins,
+
+  pulseCurrentPoint: {
+    datasetIndex: 1,
+    rings: 4,
+    maxR: 52,
+    periodMs: 2500,
+    startDelayMs: 350,
+    fadeInMs: 420,
+    maxAlpha: 0.26,
+    lineWidth: 2,
+  },
+legend: {
+  display: true,
+  position: 'bottom',
+  align: 'center',
+  labels: {
+    filter: (item) => item.datasetIndex === 1,
+    usePointStyle: true,
+    pointStyle: 'circle',
+    boxWidth: 8,
+    boxHeight: 8,
+    padding: 10,
+    font: { size: 11, weight: '500' },
+    color: THEME.muted || '#0F172A',
+  },
+},
+tooltip: {
+  enabled: true,
+  displayColors: false,
+  filter: (ctx) => ctx.datasetIndex === 1,
+  callbacks: {
+    title: () => '',
+    label: (ctx) => {
+      const x = Number(ctx.parsed?.x ?? 0)
+      const p = Number(r?.rsl?.percentile ?? r?.rsl?.percentile_0to1 ?? 0)
+      const top = Math.max(0, Math.min(100, Math.round((1 - p) * 100)))
+      const topTxt = `Top ${top}%`
+      return [`● Current · ${topTxt}`, `FRI · ${x.toFixed(2)} / 5`]
+    },
+},
+},
+},
+},
+}),
+() => {
+  animateChartData('chartRslBars', (c) => {
+    if (!c) return
+
+    const ds0 = c.data?.datasets?.[0]
+    const curvePtsRaw =
+    r?.rsl?.charts?.cohort_positioning?.curve_points &&
+    Array.isArray(r.rsl.charts.cohort_positioning.curve_points)
+    ? r.rsl.charts.cohort_positioning.curve_points
+    : Array.isArray(ds0?.__curveTemplate)
+    ? ds0.__curveTemplate
+    : DEFAULT_COHORT_CURVE
+
+    let curvePts = (Array.isArray(curvePtsRaw) ? curvePtsRaw : [])
+    .map((pt) => ({
+      x: Number(pt?.x ?? pt?.fri ?? 0),
+      y: Number(pt?.y ?? pt?.pct ?? 0),
+    }))
+  .filter((pt) => Number.isFinite(pt.x) && Number.isFinite(pt.y))
+  .sort((a, b) => a.x - b.x)
+
+  const maxY = curvePts.reduce((m, p) => (p.y > m ? p.y : m), 0)
+  if (maxY > 0 && maxY <= 1.5) {
+    curvePts = curvePts.map((p) => ({ x: p.x, y: p.y * 100 }))
+  }
+
+const fri = Math.max(0, Math.min(5, Number(r?.rsl?.fri?.score ?? r?.rsl?.fri_score ?? r?.rsl?.fri ?? 0)))
+
+const yAtX = (x) => {
+  if (!curvePts.length) return 0
+  if (x <= curvePts[0].x) return Number(curvePts[0].y ?? 0)
+  for (let i = 1; i < curvePts.length; i++) {
+    const a = curvePts[i - 1],
+    b = curvePts[i]
+    if (x <= b.x) {
+      const t = (x - a.x) / (b.x - a.x || 1)
+      return a.y + (b.y - a.y) * t
+    }
+}
+return Number(curvePts[curvePts.length - 1].y ?? 0)
+}
+
+const curPt = { x: fri, y: yAtX(fri) }
+
+if (c.data?.datasets?.[0]) {
+  c.data.datasets[0].data = curvePts
+  c.data.datasets[0].__curveTemplate = curvePts
+}
+if (c.data?.datasets?.[1]) {
+  c.data.datasets[1].data = [curPt]
+  c.data.datasets[1].pointRadius = 6
+}
+
+try {
+  if (c && c.data && c.data.datasets && c.data.datasets[1]) {
+    c.data.datasets[1].pointRadius = 0
+    c.$currentRevealTimer && clearTimeout(c.$currentRevealTimer)
+    c.$currentRevealTimer = setTimeout(() => {
+      try {
+        c.data.datasets[1].pointRadius = 6
+        c.update()
+      } catch (_e) {}
+  }, 1000)
+}
+} catch (_e) {}
+})
+},
+)
+
+mountChartDeferred(
+'chartRslRadar',
+(animate) => ({
+  type: 'radar',
+  data: {
+    labels: arcLabels,
+    datasets: [
+    {
+      label: 'RSL profile',
+      data: (() => {
+        const v = arcVals.slice();
+        return animate ? v : v.map(() => 0);
+      })(),
+    fill: true,
+    backgroundColor: THEME.pillB,
+    borderColor: THEME.accentB,
+    borderWidth: 2,
+    pointRadius: 3,
+    pointHoverRadius: 3,
+    pointBackgroundColor: THEME.accentB,
+    pointBorderWidth: 0,
+  },
+],
+},
+options: {
+  ...baseChartOptions(animate),
+  plugins: {
+    ...baseChartOptions(animate).plugins,
+    legend: { ...baseChartOptions(animate).plugins.legend, position: 'bottom' },
+    radarValueLabels: false,
+  },
+scales: {
+  r: {
+    min: 0,
+    max: 6,
+    ticks: { display: false, backdropColor: 'transparent' },
+    pointLabels: {
+      padding: 8,
+      font: { size: 10, weight: '500' },
+      color: THEME.text || '#0f172a',
+    },
+  grid: { color: 'rgba(148,163,184,.22)' },
+  angleLines: { color: 'rgba(148,163,184,.22)' },
+},
+},
+},
+}),
+() =>
+animateChartData('chartRslRadar', (c) => {
+  c.data.datasets[0].data = arcVals.slice()
+  c.options.plugins.radarValueLabels = false
+}),
+)
+const tracksRaw = r?.role_fit?.track_scores ?? []
+
+const tracks = (() => {
+  if (Array.isArray(tracksRaw)) return tracksRaw
+  if (tracksRaw && typeof tracksRaw === 'object') {
+    return Object.keys(tracksRaw).map((k) => ({ track: k, pct: tracksRaw[k] }))
+  }
+return []
+})()
+
+const roles = tracks.map((t) => String(t?.track ?? '')).filter(Boolean)
+const roleVals = tracks.map((t) =>
+clamp01((typeof t?.pct === 'number' ? t.pct : Number(t?.pct || 0)) / 100),
+)
+mountChartDeferred(
+'chartHrFit',
+(animate) => ({
+  type: 'bar',
+  data: {
+    labels: roles,
+    datasets: [
+    {
+      label: String((window.NP_UI_LABELS && window.NP_UI_LABELS.role_fit_dataset_label) || ''),
+      data: (() => { const v = roleVals.slice(); return animate ? v : v.map(() => 0); })(),
+      ...BAR_FIXED_VERTICAL,
+      backgroundColor: THEME.accentD,
+    },
+],
+},
+options: {
+  ...baseChartOptions(animate),
+  plugins: {
+    ...baseChartOptions(animate).plugins,
+    barValueLabels: { format: 'float2', textColor: THEME.text || '#0f172a' },
+  },
+scales: {
+  y: { min: 0, max: 1, grid: { color: 'rgba(148,163,184,.22)' } },
+  x: { grid: { display: false } },
+},
+},
+}),
+() =>
+animateChartData('chartHrFit', (c) => {
+  c.data.datasets[0].data = roleVals.slice()
+}),
+)
+}
+
+function initSignatureOnceOnView(){
+  if (sigHasAnimatedOnce) return;
+
+  const target =
+  document.querySelector("#signatureWrap") ||
+  document.querySelector("#signatureCanvas") ||
+  null;
+  if(!target) return;
+
+  const runOnce = () => {
+    if (sigHasAnimatedOnce) return;
+    try { drawSignatureFingerprintAnimated(REPORT); } catch(_e) {}
+  };
+
+if ("IntersectionObserver" in window){
+  const io = new IntersectionObserver((entries)=>{
+    for(const ent of entries){
+      if(ent.isIntersecting){
+        runOnce();
+        try{ io.disconnect(); }catch(e){}
+        break;
+      }
+  }
+}, { threshold: 0.35 });
+io.observe(target);
+} else {
+
+const onScroll = () => {
+  const r = target.getBoundingClientRect();
+  const vh = window.innerHeight || document.documentElement.clientHeight;
+  if(r.top < vh*0.75 && r.bottom > vh*0.25){
+    runOnce();
+    window.removeEventListener("scroll", onScroll);
+  }
+};
+window.addEventListener("scroll", onScroll, { passive:true });
+onScroll();
+}
+}
+
+function boot() {
+
+  try {
+    renderReport(REPORT)
+  } catch (e) {
+  NP_DEBUG && console.error('Render error:', e)
+}
+
+try {
+  __np_initRoleFitFlowOnView()
+} catch (e) {
+NP_DEBUG && console.error('RoleFitFlow init error:', e)
+}
+
+try {
+  initSignatureOnceOnView()
+} catch (e) {
+NP_DEBUG && console.error('Signature init error:', e)
+}
+
+try {
+  registerAllCharts(REPORT)
+} catch (e) {
+NP_DEBUG && console.error('Charts init error:', e)
+}
+
+try {
+  let sigResizeT = null
+  window.addEventListener(
+  'resize',
+  () => {
+    if (sigResizeT) window.clearTimeout(sigResizeT)
+    sigResizeT = window.setTimeout(() => {
+
+    }, 120)
+},
+{ passive: true },
+)
+} catch (e) {
+NP_DEBUG && console.error('Boot post-init error:', e)
+}
+}
+
+window.setReport = function (reportObject) {
+  window.report = reportObject
+  window.renderNeuPrint(reportObject)
+}
+
+boot()
+} // end window.renderNeuPrint
+
+;(function () {
+  function getReportData(){
+    try{
+      if(typeof window !== 'undefined' && window.REPORT && typeof window.REPORT === 'object'){
+        return window.REPORT;
+      }
+    const el = document.getElementById('dev-report-json');
+    if(el && el.textContent){
+      return JSON.parse(el.textContent);
+    }
+}catch(e){
+NP_DEBUG && console.error('[NeuPrint] Failed to load report data', e);
+}
+return null;
+}
+function run() {
+  const data = getReportData() || window.report || window.DEV_REPORT || null
+  if (data) {
+    window.report = data
+    if (!window.REPORT) window.REPORT = data
+    window.renderNeuPrint(data)
+  }
+}
+function ensureChartJs(){
+  if(window.Chart) return Promise.resolve();
+  return new Promise(function(resolve, reject){
+    var s=document.createElement('script');
+    s.src='https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js';
+    s.async=true;
+    s.onload=function(){resolve();};
+    s.onerror=function(){reject(new Error('Chart.js load failed'));};
+    document.head.appendChild(s);
+  });
+}
+function hasCharts(){
+  return !!document.querySelector('canvas[id^="chart"]');
+}
+function boot(){
+  if(!hasCharts()){
+    try{ run(); }catch(_e){}
+    return;
+  }
+ensureChartJs().then(run).catch(function(e){
+  console.error('[NeuPrint] Chart.js load failed:', e);
+  try{ run(); }catch(_e){}
+});
+}
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', boot)
+} else {
+boot()
+}
+})()
+
+})();
+
+(function(){
+  function capAgencyLabel(k){
+    if(!k) return '';
+    const m = { human:'Human', hybrid:'Hybrid', ai:'AI' };
+    return m[String(k).toLowerCase()] || k;
+  }
+function applyAgencyLabels(){
+  const root = document.getElementById('mixKpis');
+  if(!root) return;
+  const labels = root.querySelectorAll('.kpiLabel');
+  labels.forEach(el=>{
+    const raw = el.textContent.trim().toLowerCase();
+    if(raw==='human' || raw==='hybrid' || raw==='ai'){
+      el.textContent = capAgencyLabel(raw);
+      el.classList.add('agencyLabel');
+    }
+});
+}
+
+document.addEventListener('DOMContentLoaded', function(){
+  setTimeout(applyAgencyLabels, 50);
+});
+window.addEventListener('load', function(){
+  setTimeout(applyAgencyLabels, 50);
+});
+})();
+
+
+/* Input Preview Toggle */
+(function() {
+  const btn = document.getElementById('inputPreviewToggle');
+  const text = document.getElementById('inputPreviewText');
+  const stats = document.getElementById('inputPreviewStats');
+
+  if (!btn || !text) return;
+
+  function computeCounts(s) {
+    const raw = String(s || '').trim();
+    const chars = raw.length;
+
+    const words = raw.length === 0
+      ? 0
+      : raw
+          .replace(/\s+/g, ' ')
+          .split(' ')
+          .map(function(x){ return String(x).trim(); })
+          .filter(function(x){ return x.length > 0; })
+          .length;
+
+    const sentences = raw
+      .split(/[.!?]+/g)
+      .map(function(x){ return String(x).trim(); })
+      .filter(function(x){ return x.length > 0; })
+      .length;
+
+    return { chars: chars, words: words, sentences: sentences };
+  }
+
+  function renderStats() {
+    if (!stats) return;
+    const c = computeCounts(text.textContent || '');
+    // Recommended: Words + Sentences are most intuitive for readers; characters are still computed if needed later.
+    stats.innerHTML =
+      '<span class="statLabel">Words</span> <span class="statNum">' + c.words.toLocaleString() + '</span>' +
+      ' · ' +
+      '<span class="statLabel">Sentences</span> <span class="statNum">' + c.sentences.toLocaleString() + '</span>';
+  }
+
+  function setButton(expanded) {
+    btn.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+    btn.classList.toggle('expanded', !!expanded);
+    const labelEl = btn.querySelector('.tLabel');
+    if (labelEl) labelEl.textContent = expanded ? 'Collapse' : 'View all';
+  }
+
+  renderStats();
+  setButton(false);
+
+  btn.addEventListener('click', function() {
+    const isCollapsed = text.classList.contains('collapsed');
+    if (isCollapsed) {
+      text.classList.remove('collapsed');
+      setButton(true);
+    } else {
+      text.classList.add('collapsed');
+      setButton(false);
+    }
+  });
+})();
+
+</script>
+</div>
+<script>
+(function () {
+  var textEl = document.getElementById('inputPreviewText');
+  var statsEl = document.getElementById('inputPreviewStats');
+  if (!textEl || !statsEl) return;
+
+  var text = textEl.innerText || "";
+  var characters = text.length;
+
+  var words = text.trim().split(/\s+/).filter(Boolean).length;
+
+  var sentences = text
+    .split(/[.!?]+/)
+    .map(function (s) { return s.trim(); })
+    .filter(Boolean).length;
+
+  function fmt(n){ try { return n.toLocaleString(); } catch(e){ return n; } }
+
+  statsEl.innerHTML =
+    '<span class="statLabel">Words</span> ' + fmt(words) +
+    ' · <span class="statLabel">Sentences</span> ' + fmt(sentences);
+})();
+</script>
+
+</body>
+</html>
